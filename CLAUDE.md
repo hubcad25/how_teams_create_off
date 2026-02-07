@@ -2,6 +2,8 @@
 
 Article Substack pour visualiser et comprendre COMMENT les équipes de la LNH créent de l'attaque à 5 contre 5.
 
+**IMPORTANT: L'article final sera en ANGLAIS.** Tous les labels, noms de dimensions et visualisations doivent être en anglais.
+
 ## Source de données
 - **URL principale**: https://moneypuck.com/teams.htm (saison 2025-26 en cours)
 - **Glossaire**: https://moneypuck.com/glossary.htm
@@ -21,8 +23,25 @@ Ces variables décrivent COMMENT les équipes jouent:
 
 ### 2. Réduction dimensionnelle: Factor Analysis
 
-- FA à 1 facteur par groupe de variables (5 dimensions)
+- FA à 1 facteur par groupe de variables (7 dimensions)
 - Scores standardisés (z-scores) pour comparabilité
+
+**Dimensions:**
+1. **Volume** — Shot volume per 60 (Corsi, Fenwick, SOG, xG)
+2. **Quality** — Shot selection (xG/shot, HD/MD/LD ratios)
+3. **Penetration** — Ability to get shots through (completion rate, blocked/missed rates)
+4. **Rebounds** — Second chance creation
+5. **Finishing** — Converting vs expected (Sh% vs xSh%, goals above expected)
+6. **Recovery+Possession** — Puck recovery (takeaways), limiting giveaways, maintaining zone pressure
+7. **Puck exchanges** — Pace of play, turnover frequency (high giveaways+takeways, low hits/penalties)
+
+**Cluster Names (k=6):**
+- Cluster 2: High-Octane Drive: Tempo rapide, drive the net, beaucoup de rebonds
+- Cluster 6: Puck Hog & Finish: prennent controle de la rondelle aggressivement puis la garde, bons finishers.
+- Cluster 4: Selective Shooting: ne tirent pas beaucoup mais qualité, pas beaucoup de traffic, bon finishing.
+- Cluster 3: Streaky Offense: ils sont dans la moyenne partout. Ce qui drive performance est le finishing donc très volatil
+- Cluster 1: Crash & Hope: vont au filet et récupération un peu aggressive, pas de finish.
+- Cluster 5: Lane Creation: créer les lignes de tir de qualité, succès drivé par traffic et puck exchanges
 
 ### 3. Clustering
 
