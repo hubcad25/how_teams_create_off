@@ -73,9 +73,13 @@ Below, the dendrogram for k=6 paired with a heatmap of dimension scores (same or
 
 ![Dendrogram heatmap k=6](outputs/figures/figure4_dendrogram_heatmap.png)
 
-[Donc ici on interprète les clusters selon k=6 et la heatmap en-dessous. Séparer la heatmap par cluster avec facet wrap]
 
-[Mettre le même graph pour les autres k en annexe]
+Interpretation:
+[Petit cluster, mais très clair: MTL et OTT. Les deux équipes se démarquent énormément sur l'aspect recovery possession, pas de puck exchanges. ]
+
+[Gros cluster average: 12 équipes, de CGY à WSH, sont près de la moyenne presque partout. leur Zscore vont de -1.5 à 1.3 au maximum. (ne pas parler du finishing tout de suite.). C'est un cluster]
+[Le cluster de MIN à CHI est celui qui se sépare du peloton quand on passe de k=5 à k=6. On peut voir que cluster se démarque un peu par +rebounds et -finishing, mais pas tant que ça.]
+
 
 ### Interpreting and Naming Archetypes
 
