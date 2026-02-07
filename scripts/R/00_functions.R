@@ -69,6 +69,7 @@ theme_hockey <- function(base_size = 11, base_family = "") {
 
       # Legend at bottom
       legend.position = "bottom",
-      legend.title = element_text(face = "bold", size = base_size * 0.85)
+      legend.title = element_text(face = "bold", size = base_size * 0.85),
+      legend.ticks = element_blank()
     )
 }

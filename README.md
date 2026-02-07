@@ -2,8 +2,6 @@
 
 > Question: How do NHL teams generate offense at 5v5? Traditional stats (GF, xG) tell us **if** a team produces goals or quality chances, but not **how**. This analysis identifies offensive archetypes and reveals which stylistic choices actually predict success.
 
----
-
 ## Introduction
 
 Traditional offensive stats (GF, xG) measure *results*, not *process*. Two teams can have identical xG/60 but create it in completely different ways.
@@ -11,8 +9,6 @@ Traditional offensive stats (GF, xG) measure *results*, not *process*. Two teams
 Instead of asking "how much?", we ask "how?". We decompose offensive style into 7 intuition-based independent dimensions, then identify 6 distinct offensive archetypes across the NHL.
 
 ![Goals per 60 by cluster](outputs/figures/figure6_goals_strip.png)
-
----
 
 ## Data & Methodology
 
@@ -28,8 +24,6 @@ Variables: 30+ input variables measuring *how* teams play:
 We run a confirmatory factor analysis on each dimension (1 factor per dimension, except Miscellaneous where we force 2 factors). From the factor loadings, we compute dimension scores for each team.
 
 We then apply hierarchical clustering (Ward D2) on these dimension scores. Based on cluster interpretability, we select k=6 archetypes.
-
----
 
 ## Dimensions
 
@@ -57,11 +51,15 @@ Here is how each NHL team profiles across these 7 dimensions in 2025-2026:
 
 ![Team offensive profiles](outputs/figures/figure2_dimensions_heatmap.png)
 
-[texte d'interprétation]
-
----
+A few scores stand out already.
+- Carolina and Colorado have high *Volume* and *Rebounds* scores, suggesting they generate a lot of shots and create second chances.
+- Montreal and Ottawa have high *Recovery+Possession* and low *Puck exchanges*, suggesting they win the puck back and keep it rather than trading turnovers.
+- Edmonton and LA have high *Quality* and *Penetration*, suggesting they get pucks through to dangerous areas before shooting.
+- San Jose has the highest *Quality* score but the lowest *Volume*. Since *Quality* is built from ratios (xG/shot, danger%), this likely reflects a team that shoots less, but selects high-danger opportunities when it does. 
 
 ## Creating Offensive Archetypes
+
+
 
 ### How Many Archetypes?
 
@@ -91,8 +89,6 @@ The dendrogram with k=6 reveals natural groupings:
 | **4** | Selective Shooting | Low volume, elite shot quality, efficient | DAL, PHI, SEA, SJS, TOR |
 | **5** | Lane Creation | Exceptional penetration, creates high-quality lanes | EDM, LAK, NYR |
 | **6** | Puck Hog & Finish | Elite recovery + above-expected finishing | MTL, OTT |
-
----
 
 ## [What Drives Success? trouver un titre clair pour cette section]
 
@@ -126,8 +122,6 @@ We measure success by Goals/60—the purest output metric.
 
 [Est-ce qu'on devrait ensuite montrer descriptivement la relation succès-dimension pour chaque cluster? Avant le test? en Annexe?]
 
----
-
 ## Do These Styles Exist in Past Seasons?
 
 > Method: Apply the 2025-26 clustering model to historical seasons (assuming the 6 archetypes are stable over time)
@@ -136,7 +130,6 @@ We measure success by Goals/60—the purest output metric.
 
 ![Team trajectories heatmap](outputs/figures/figure9_team_trajectories.png)
 
----
 
 ## Next Steps
 
@@ -155,8 +148,6 @@ Questions to explore:
 
 - Does a relationship exist between the success of an offensive approach and the success of a defensive approach against that style?
 
----
-
 ## Data & Methods
 
 **Data Source:** [MoneyPuck](https://moneypuck.com/teams.htm) - 5v5 team statistics
@@ -167,8 +158,6 @@ Questions to explore:
 - **R:** tidyverse, psych, cluster, clessnize, ggplot2 (analysis & viz)
 
 **Outputs:** `outputs/figures/` and `outputs/tables/`
-
----
 
 ## Appendix
 
