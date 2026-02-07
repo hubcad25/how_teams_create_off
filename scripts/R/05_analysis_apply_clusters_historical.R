@@ -6,13 +6,13 @@ library(psych)
 
 cat("APPLY 2025-26 MODEL TO HISTORICAL SEASONS\n\n")
 
-# --- PARAMÈTRES ---
-POWER <- 1.15  # Même puissance que 03_dimension_fa.R
+# --- PARAMETERS ---
+POWER <- 1.15  # Same as 03_analysis_dimension_scores.R
 # ---------------
 
-# 1. CHARGER LE MODÈLE 2025-26 ----
+# 1. LOAD 2025-26 MODEL ----
 
-cat("Chargement du modèle 2025-26...\n")
+cat("Loading 2025-26 model...\n")
 
 # Dimensions definitions (FA groupings)
 dimensions <- readRDS("data/processed/dimension_definitions.rds")
@@ -29,19 +29,9 @@ centroids_2025 <- df_2025 %>%
   group_by(cluster) %>%
   summarise(across(all_of(score_cols), mean), .groups = "drop")
 
-# Store 2025 scaling parameters (for standardization)
-df_2025_raw <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE)
-input_cols <- names(df_2025_raw)[str_detect(names(df_2025_raw), "^input_")]
-means_2025 <- df_2025_raw %>%
-  select(all_of(input_cols)) %>%
-  summarise(across(everything(), mean, na.rm = TRUE))
-sds_2025 <- df_2025_raw %>%
-  select(all_of(input_cols)) %>%
-  summarise(across(everything(), sd, na.rm = TRUE))
+cat("  Model loaded:", nrow(centroids_2025), "clusters,", length(score_cols), "dimensions\n\n")
 
-cat("  Modèle chargé:", nrow(centroids_2025), "clusters,", length(score_cols), "dimensions\n\n")
-
-# 2. FONCTION POUR CALCULER LES SCORES FA ----
+# 2. FUNCTION TO COMPUTE FA SCORES ----
 
 compute_fa_scores <- function(df_new, fa_results, dimensions) {
 
@@ -51,12 +41,12 @@ compute_fa_scores <- function(df_new, fa_results, dimensions) {
     vars <- dimensions[[dim_name]]
     result <- fa_results[[dim_name]]
 
-    # Get data and standardize using 2025 params
+    # Get data and standardize
     data <- df_new %>% select(all_of(vars))
 
     # Handle 2-factor Misc dimension
     if (result$n_factors == 2) {
-      # For 2 factors, need to compute scores using loadings matrix
+      # For 2 factors, compute scores using loadings matrix
       loadings_mat <- result$loadings
       data_scaled <- scale(data, center = TRUE, scale = TRUE)
       scores <- data_scaled %*% loadings_mat
@@ -83,7 +73,7 @@ compute_fa_scores <- function(df_new, fa_results, dimensions) {
   return(score_df)
 }
 
-# 3. FONCTION POUR ASSIGNER AUX CLUSTERS ----
+# 3. FUNCTION TO ASSIGN TO CLUSTERS ----
 
 assign_to_clusters <- function(scores, centroids) {
 
@@ -103,21 +93,21 @@ assign_to_clusters <- function(scores, centroids) {
   )
 }
 
-# 4. APPLIQUER À CHAQUE SAISON HISTORIQUE ----
+# 4. APPLY TO EACH HISTORICAL SEASON ----
 
-cat("Application aux saisons historiques...\n\n")
+cat("Applying to historical seasons...\n\n")
 
 seasons <- c("2020", "2021", "2022", "2023", "2024")
 all_clustered <- list()
 
 for (season in seasons) {
-  cat(paste0("Saison ", season, "-", as.integer(season)+1, ":\n"))
+  cat(paste0("Season ", season, "-", as.integer(season)+1, ":\n"))
 
   # Load cleaned data
   df_hist <- read_csv(paste0("data/cleaned/team_data_clean_", season, ".csv"),
                       show_col_types = FALSE)
 
-  cat("  ", nrow(df_hist), "équipes\n")
+  cat("  ", nrow(df_hist), "teams\n")
 
   # Compute FA scores
   scores_hist <- compute_fa_scores(df_hist, fa_results_2025, dimensions)
@@ -135,19 +125,19 @@ for (season in seasons) {
   cluster_summary <- df_result %>%
     count(cluster) %>%
     arrange(cluster)
-  cat("  Distribution:", paste(cluster_summary$n, collapse="-"), "\n\n")
+  cat("  Distribution:", paste(cluster_summary$n, collapse = "-"), "\n\n")
 
   all_clustered[[season]] <- df_result
 }
 
-# 5. COMBINER TOUTES LES SAISONS ----
+# 5. COMBINE ALL SEASONS ----
 
 df_all_seasons <- bind_rows(all_clustered)
 
 cat("===================================\n")
-cat("TOTAL:", nrow(df_all_seasons), "équipes-saisons\n\n")
+cat("TOTAL:", nrow(df_all_seasons), "team-seasons\n\n")
 
-# 6. AJOUTER 2025-26 POUR COMPARAISON ----
+# 6. ADD 2025-26 FOR COMPARISON ----
 
 df_2025_renamed <- df_2025 %>%
   select(team, name, all_of(score_cols), cluster) %>%
@@ -158,9 +148,9 @@ df_2025_renamed <- df_2025 %>%
 df_complete <- bind_rows(df_all_seasons, df_2025_renamed) %>%
   mutate(season_year = factor(season_year))
 
-# 7. SAUVEGARDE ----
+# 7. SAVE DATA ----
 
-cat("Sauvegarde des résultats...\n")
+cat("Saving results...\n")
 
 dir.create("data/historical", showWarnings = FALSE, recursive = TRUE)
 
@@ -181,16 +171,16 @@ cluster_summary_season <- df_complete %>%
 write_csv(cluster_summary_season, "data/historical/cluster_distribution_by_season.csv")
 cat("  data/historical/cluster_distribution_by_season.csv\n\n")
 
-# 8. AFFICHAGE RÉSUMÉ ----
+# 8. DISPLAY SUMMARY ----
 
-cat("DISTRIBUTION DES CLUSTERS PAR SAISON\n\n")
+cat("CLUSTER DISTRIBUTION BY SEASON\n\n")
 print(cluster_summary_season %>%
         mutate(avg_distance = round(avg_distance, 3)))
 
 cat("\n")
 
 # Cluster stability: which teams stay in same cluster?
-cat("STABILITÉ DES CLUSTERS (2020-24 vs 2025-26)\n\n")
+cat("CLUSTER STABILITY (2020-24 vs 2025-26)\n\n")
 
 # Get teams with data in multiple seasons
 team_seasons <- df_complete %>%
@@ -200,7 +190,7 @@ team_seasons <- df_complete %>%
   pull(team) %>%
   unique()
 
-cat("Équipes présentes dans plusieurs saisons:", length(team_seasons), "\n\n")
+cat("Teams in multiple seasons:", length(team_seasons), "\n\n")
 
 # Compare first season vs 2025-26
 stability <- df_complete %>%
@@ -217,9 +207,9 @@ stability <- df_complete %>%
   filter(season_year == "2025-2026") %>%
   mutate(stable = (first_cluster == cluster))
 
-cat("Équipes stables (même cluster en 2025-26 qu'au début):\n",
+cat("Stable teams (same cluster in 2025-26 as at start):\n",
     sum(stability$stable), "/",
     nrow(stability),
     sprintf("(%.0f%%)", mean(stability$stable) * 100), "\n\n")
 
-cat("Script terminé.\n")
+cat("Script complete.\n")

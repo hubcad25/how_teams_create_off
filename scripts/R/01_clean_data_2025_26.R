@@ -1,25 +1,25 @@
-# Nettoyage et calcul des métriques
-# Saison 2025-26, statistiques 5v5
+# Clean 2025-26 MoneyPuck data and compute metrics
+# Season 2025-26, 5v5 statistics
 
 library(tidyverse)
 
-# 1. CHARGEMENT DES DONNÉES ----
+# 1. LOAD RAW DATA ----
 
-cat("Chargement des données...\n")
+cat("Loading 2025-26 data...\n")
 
 df_raw <- read_csv("data/raw/moneypuck_5v5_latest.csv",
                    show_col_types = FALSE)
 
-cat(" ", nrow(df_raw), "équipes,", ncol(df_raw), "colonnes brutes\n\n")
+cat(" ", nrow(df_raw), "teams,", ncol(df_raw), "raw columns\n\n")
 
-# 2. CALCUL DES MÉTRIQUES DÉRIVÉES ----
+# 2. COMPUTE DERIVED METRICS ----
 
-cat("Calcul des métriques dérivées...\n")
+cat("Computing derived metrics...\n")
 
 df_metrics <- df_raw %>%
   mutate(
 
-    # INPUTS: VOLUME D'ATTAQUE (per 60 minutes)
+    # INPUTS: SHOT VOLUME (per 60 minutes)
     iceTime_minutes = iceTime / 60,
 
     input_shotAttempts_per60 = (shotAttemptsFor / iceTime) * 3600,
@@ -30,7 +30,7 @@ df_metrics <- df_raw %>%
     input_corsi_pct = corsiPercentage,
     input_fenwick_pct = fenwickPercentage,
 
-    # INPUTS: QUALITÉ/SÉLECTION DE TIRS
+    # INPUTS: SHOT QUALITY/SELECTION
     input_xG_per_shotAttempt = xGoalsFor / shotAttemptsFor,
     input_xG_per_unblockedShot = xGoalsFor / unblockedShotAttemptsFor,
     input_xG_per_SOG = xGoalsFor / shotsOnGoalFor,
@@ -45,14 +45,14 @@ df_metrics <- df_raw %>%
     input_ratio_HD_MD = highDangerShotsFor / mediumDangerShotsFor,
     input_ratio_MD_LD = mediumDangerShotsFor / lowDangerShotsFor,
 
-    # INPUTS: EFFICACITÉ/COMPLÉTION DES TIRS
+    # INPUTS: SHOT COMPLETION/PENETRATION
     input_shot_completion_rate = shotsOnGoalFor / shotAttemptsFor,
     input_unblocked_rate = unblockedShotAttemptsFor / shotAttemptsFor,
 
     input_blocked_shot_rate = blockedShotAttemptsFor / shotAttemptsFor,
     input_missed_net_rate = missedShotsFor / unblockedShotAttemptsFor,
 
-    # INPUTS: CRÉATION DE CHANCES
+    # INPUTS: CHANCE CREATION
     input_rebounds_per60 = (reboundsFor / iceTime) * 3600,
     input_takeaways_per60 = (takeawaysFor / iceTime) * 3600,
     input_giveaways_per60 = (giveawaysFor / iceTime) * 3600,
@@ -66,13 +66,13 @@ df_metrics <- df_raw %>%
     input_penalty_differential_per60 = ((penaltiesAgainst - penaltiesFor) / iceTime) * 3600,
     input_penalties_taken_per60 = (penaltiesFor / iceTime) * 3600,
 
-    # INPUTS: OPTIONNELS (style de jeu)
+    # INPUTS: PLAYING STYLE
     input_faceoff_win_pct = faceOffsWonFor / (faceOffsWonFor + faceOffsWonAgainst),
     input_hits_per60 = (hitsFor / iceTime) * 3600,
     input_zone_exit_success = playContinuedOutsideZoneFor /
                               (playContinuedOutsideZoneFor + playContinuedInZoneFor),
 
-    # OUTPUTS: RÉSULTATS/SUCCÈS OFFENSIF (conversion)
+    # OUTPUTS: OFFENSIVE SUCCESS (conversion)
     output_goals_per60 = (goalsFor / iceTime) * 3600,
     output_goals_pct = goalsFor / (goalsFor + goalsAgainst),
 
@@ -105,11 +105,11 @@ df_metrics <- df_raw %>%
     output_LD_goals_vs_xG = lowDangerGoalsFor / lowDangerxGoalsFor
   )
 
-cat("  Métriques calculées\n\n")
+cat("  Metrics computed\n\n")
 
-# 3. SÉLECTION DES VARIABLES FINALES ----
+# 3. SELECT FINAL VARIABLES ----
 
-cat("Création de la dataframe finale...\n")
+cat("Creating final dataframe...\n")
 
 df_clean <- df_metrics %>%
   select(
@@ -118,14 +118,14 @@ df_clean <- df_metrics %>%
     starts_with("output_")
   )
 
-cat("  Identifiants:", ncol(df_clean %>% select(team:iceTime_minutes)), "colonnes\n")
-cat("  Variables INPUT:", ncol(df_clean %>% select(starts_with("input_"))), "colonnes\n")
-cat("  Variables OUTPUT:", ncol(df_clean %>% select(starts_with("output_"))), "colonnes\n")
-cat("  TOTAL:", ncol(df_clean), "colonnes\n\n")
+cat("  Identifiers:", ncol(df_clean %>% select(team:iceTime_minutes)), "columns\n")
+cat("  INPUT variables:", ncol(df_clean %>% select(starts_with("input_"))), "columns\n")
+cat("  OUTPUT variables:", ncol(df_clean %>% select(starts_with("output_"))), "columns\n")
+cat("  TOTAL:", ncol(df_clean), "columns\n\n")
 
-# 4. VÉRIFICATION DES DONNÉES ----
+# 4. DATA QUALITY CHECKS ----
 
-cat("Vérification des données...\n")
+cat("Checking data quality...\n")
 
 check_issues <- df_clean %>%
   select(starts_with("input_"), starts_with("output_")) %>%
@@ -135,7 +135,7 @@ check_issues <- df_clean %>%
 n_issues <- sum(check_issues > 0)
 
 if (n_issues > 0) {
-  cat("  Problèmes détectés:\n")
+  cat("  Issues detected:\n")
   issues <- check_issues %>%
     pivot_longer(everything(), names_to = "variable", values_to = "n_issues") %>%
     filter(n_issues > 0) %>%
@@ -143,11 +143,11 @@ if (n_issues > 0) {
   print(issues)
   cat("\n")
 } else {
-  cat("  Aucun NaN ou Inf détecté\n\n")
+  cat("  No NaN or Inf detected\n\n")
 }
 
-# Aperçu
-cat("Aperçu des données:\n")
+# Preview
+cat("Data preview:\n")
 print(df_clean %>% select(team, input_xGoals_per60, input_ratio_HD_LD,
                           output_goals_pct, output_ratio_GF_xG) %>%
       arrange(desc(output_goals_pct)) %>%
@@ -155,9 +155,9 @@ print(df_clean %>% select(team, input_xGoals_per60, input_ratio_HD_LD,
 
 cat("\n")
 
-# 5. SAUVEGARDE ----
+# 5. SAVE DATA ----
 
-cat("Sauvegarde des données...\n")
+cat("Saving data...\n")
 
 dir.create("data/processed", showWarnings = FALSE, recursive = TRUE)
 
@@ -171,25 +171,21 @@ write_csv(df_clean, filename_latest)
 cat("  -", filename, "\n")
 cat("  -", filename_latest, "\n\n")
 
-# 6. STATISTIQUES DESCRIPTIVES ----
+# 6. DESCRIPTIVE STATISTICS ----
 
-cat("Statistiques descriptives des INPUTS:\n")
-
+cat("INPUT statistics:\n")
 summary_inputs <- df_clean %>%
   select(starts_with("input_")) %>%
   summary()
-
 print(summary_inputs)
 
-cat("\nStatistiques descriptives des OUTPUTS:\n")
-
+cat("\nOUTPUT statistics:\n")
 summary_outputs <- df_clean %>%
   select(starts_with("output_")) %>%
   summary()
-
 print(summary_outputs)
 
-# 7. LABELS POUR GRAPHIQUES ----
+# 7. METRIC LABELS FOR PLOTS ----
 
 metric_labels <- c(
   # INPUTS: Volume
@@ -274,6 +270,6 @@ get_label <- function(var_name) {
 }
 
 saveRDS(metric_labels, "data/processed/metric_labels.rds")
-cat("\nLabels sauvegardés: data/processed/metric_labels.rds\n")
+cat("\nLabels saved: data/processed/metric_labels.rds\n")
 
-cat("\nScript terminé.\n")
+cat("\nScript complete.\n")

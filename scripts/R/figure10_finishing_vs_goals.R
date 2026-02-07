@@ -1,23 +1,21 @@
-# All Clusters: Relationship between Finishing and GF/60
+# FIGURE 10: Finishing vs Goals/60 by cluster
+# Shows how finishing ability drives offensive production
 
 library(tidyverse)
 library(clessnize)
 library(ggrepel)
 
-# 1. CHARGEMENT ----
-
+# Read data
 df_teams <- read_csv("data/processed/team_clustered.csv", show_col_types = FALSE)
 df_metrics <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE) %>%
   select(team, output_goals_per60)
 
-# 2. PRÉPARATION DES DONNÉES ----
-
-# Joindre les données
+# Prepare data
 all_data <- df_teams %>%
   select(team, name, cluster, Finishing) %>%
   left_join(df_metrics, by = "team")
 
-# Ajouter noms des clusters et ordonner par GF/60 moyen
+# Cluster names and order
 cluster_names <- c(
   "1" = "Crash & Hope",
   "2" = "High-Octane Drive",
@@ -40,34 +38,26 @@ all_data <- all_data %>%
     cluster = factor(cluster, levels = cluster_order)
   )
 
-# Couleurs par cluster
+# Cluster colors
 cluster_colors <- c(
   "2" = "#e74c3c",  # High-Octane - red
   "6" = "#3498db",  # Puck Hog - blue
   "4" = "#27ae60",  # Selective - green
   "3" = "#f39c12",  # Streaky - orange
-  "1" = "#9b59b6",  # Balanced - purple
-  "5" = "#1abc9c"   # Possession - teal
+  "1" = "#9b59b6",  # Crash - purple
+  "5" = "#1abc9c"   # Lane - teal
 )
 
-# 3. SCATTER PLOT ----
+# CREATE PLOT
+cat("Creating finishing vs goals scatter plot...\n")
 
 p <- ggplot(all_data, aes(x = Finishing, y = output_goals_per60)) +
-  # Ligne de référence à zéro
   geom_vline(xintercept = 0, color = "grey70", linewidth = 0.4, linetype = "dashed") +
-
-  # Facets par cluster
   facet_wrap(~ cluster, ncol = 3, labeller = labeller(cluster = cluster_names)) +
-
-  # Points colorés par cluster
   geom_point(aes(color = cluster), size = 3, alpha = 0.7, shape = 16, show.legend = FALSE) +
-
-  # Labels des équipes
   geom_text_repel(aes(label = name),
                   size = 2.8, fontface = "bold", color = "grey30",
                   max.overlaps = 15, segment.color = "grey70") +
-
-  # Échelles
   scale_x_continuous(
     limits = c(-3.2, 2.0),
     breaks = seq(-3, 2, by = 1)
@@ -77,7 +67,6 @@ p <- ggplot(all_data, aes(x = Finishing, y = output_goals_per60)) +
     breaks = seq(1.8, 3.6, by = 0.3)
   ) +
   scale_color_manual(values = cluster_colors) +
-
   theme_clean_light() +
   theme(
     axis.title = element_text(size = 10, face = "bold"),
@@ -91,15 +80,14 @@ p <- ggplot(all_data, aes(x = Finishing, y = output_goals_per60)) +
   ) +
   labs(
     title = "Finishing vs Goals For/60 by Cluster",
-    subtitle = "How finishing ability drives offensive production across different offensive styles",
+    subtitle = "How finishing ability drives offensive production across styles",
     x = "Finishing Score (z-score)",
     y = "Goals For / 60"
   )
 
-# 4. SAUVEGARDER ----
-
-ggsave("outputs/figures/07_cluster3_finishing.png", p,
+# Save
+ggsave("outputs/figures/figure10_finishing_vs_goals.png", p,
        width = 12, height = 8, dpi = 150)
 
+cat("Saved: outputs/figures/figure10_finishing_vs_goals.png\n")
 print(p)
-cat("\nSauvegardé: outputs/figures/all_clusters_finishing_gf60.png\n")

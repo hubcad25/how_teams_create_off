@@ -1,18 +1,19 @@
-# Création des dimensions via FA à 1 facteur
+# Factor Analysis: Create 7 orthogonal dimensions
+# One factor per dimension (confirmatory FA)
 
 library(tidyverse)
 library(psych)
 
-cat("CRÉATION DES DIMENSIONS (FA)\n\n")
+cat("FACTOR ANALYSIS: DIMENSION CREATION\n\n")
 
-# 1. CHARGEMENT ----
+# 1. LOAD DATA ----
 
 df <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE)
 metric_labels <- readRDS("data/processed/metric_labels.rds")
 
-cat("Données:", nrow(df), "équipes\n\n")
+cat("Data:", nrow(df), "teams\n\n")
 
-# 2. DÉFINITION DES DIMENSIONS ----
+# 2. DEFINE DIMENSIONS ----
 
 dimensions <- list(
 
@@ -79,7 +80,7 @@ dim_names <- c(
   "Misc_2" = "Puck exchanges"
 )
 
-# 3. FONCTION FA À 1 FACTEUR ----
+# 3. FA FUNCTION (1 FACTOR) ----
 
 compute_fa_dimension <- function(df, vars, dim_name, n_factors = 1) {
 
@@ -136,9 +137,9 @@ print_loadings <- function(loadings, metric_labels, dim_name, var_pct) {
   cat("\n")
 }
 
-# 4. FA PAR DIMENSION ----
+# 4. FA PER DIMENSION ----
 
-cat("FA PAR DIMENSION\n\n")
+cat("FACTOR ANALYSIS BY DIMENSION\n\n")
 
 results <- list()
 score_list <- list()
@@ -148,22 +149,22 @@ for (dim_name in names(dimensions)) {
   vars <- dimensions[[dim_name]]
 
   if (dim_name == "Misc") {
-    # Tester 1 et 2 facteurs pour Misc
+    # Test 1 vs 2 factors for Misc
     fa1 <- compute_fa_dimension(df, vars, dim_name, n_factors = 1)
     fa2 <- compute_fa_dimension(df, vars, dim_name, n_factors = 2)
 
-    cat("MISC - Test 1 vs 2 facteurs:\n")
-    cat(sprintf("  1 facteur: %.0f%% variance\n", fa1$var_explained * 100))
-    cat(sprintf("  2 facteurs: %.0f%% variance\n", fa2$var_explained * 100))
+    cat("MISC - Test 1 vs 2 factors:\n")
+    cat(sprintf("  1 factor: %.0f%% variance\n", fa1$var_explained * 100))
+    cat(sprintf("  2 factors: %.0f%% variance\n", fa2$var_explained * 100))
 
     if ((fa2$var_explained - fa1$var_explained) > 0.15) {
-      cat("  -> 2 facteurs\n\n")
+      cat("  -> 2 factors\n\n")
       results[[dim_name]] <- fa2
       print_loadings(fa2$loadings, metric_labels, dim_name, fa2$var_explained)
       score_list[["RecoveryPossession"]] <- fa2$scores[, 1]
       score_list[["PuckExchanges"]] <- fa2$scores[, 2]
     } else {
-      cat("  -> 1 facteur (gain insuffisant)\n\n")
+      cat("  -> 1 factor (insufficient gain)\n\n")
       results[[dim_name]] <- fa1
       print_loadings(fa1$loadings, metric_labels, dim_name, fa1$var_explained)
       score_list[[dim_name]] <- fa1$scores
@@ -177,10 +178,10 @@ for (dim_name in names(dimensions)) {
   }
 }
 
-# 5. CRÉER DATAFRAME DES SCORES (standardisés + accentués) ----
+# 5. CREATE SCORE DATAFRAME (standardized + accentuated) ----
 
-# Transformation en puissance pour accentuer les extrêmes
-# sign(x) * |x|^p avec p > 1
+# Power transformation to accentuate extremes
+# sign(x) * |x|^p with p > 1
 POWER <- 1.15
 
 accentuate <- function(x) sign(x) * abs(x)^POWER
@@ -191,9 +192,8 @@ score_df <- as_tibble(score_list) %>%
 df_dimensions <- df %>%
   select(team, name) %>%
   bind_cols(score_df)
-# Misc_1 and Misc_2 are already renamed as RecoveryPossession and PuckExchanges
 
-cat("SCORES PAR ÉQUIPE (aperçu)\n\n")
+cat("TEAM SCORES (preview)\n\n")
 
 print(df_dimensions %>%
         mutate(across(where(is.numeric), ~round(., 2))) %>%
@@ -202,9 +202,9 @@ print(df_dimensions %>%
 
 cat("\n")
 
-# 6. RÉSUMÉ VARIANCE ----
+# 6. VARIANCE SUMMARY ----
 
-cat("VARIANCE EXPLIQUÉE\n\n")
+cat("VARIANCE EXPLAINED\n\n")
 
 var_summary <- tibble(
   Dimension = names(results),
@@ -217,7 +217,7 @@ print(var_summary %>% mutate(Variance_pct = round(Variance_pct, 1)))
 
 cat("\n")
 
-# 7. SAUVEGARDE ----
+# 7. SAVE DATA ----
 
 dir.create("data/processed", showWarnings = FALSE, recursive = TRUE)
 dir.create("outputs/tables", showWarnings = FALSE, recursive = TRUE)
@@ -226,7 +226,7 @@ write_csv(df_dimensions, "data/processed/team_dimension_scores.csv")
 saveRDS(results, "data/processed/dimension_fa_results.rds")
 saveRDS(dimensions, "data/processed/dimension_definitions.rds")
 
-# Loadings
+# Loadings table
 loadings_all <- map_dfr(names(results), function(dim_name) {
   loadings <- results[[dim_name]]$loadings
   if (is.matrix(loadings)) {
@@ -247,7 +247,7 @@ loadings_all <- map_dfr(names(results), function(dim_name) {
 })
 write_csv(loadings_all, "outputs/tables/dimension_loadings.csv")
 
-cat("Fichiers sauvegardés:\n")
+cat("Files saved:\n")
 cat("  data/processed/team_dimension_scores.csv\n")
 cat("  data/processed/dimension_fa_results.rds\n")
 cat("  data/processed/dimension_definitions.rds\n")

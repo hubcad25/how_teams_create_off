@@ -1,27 +1,27 @@
-# Visualize historical cluster evolution (2020-21 to 2025-26)
+# FIGURE 11: Cluster evolution over time (2020-21 to 2025-26)
+# Shows how cluster sizes and performance change over time
 
 library(tidyverse)
 library(clessnize)
 
-cat("VISUALISATIONS HISTORIQUES\n\n")
+cat("CLUSTER EVOLUTION OVER TIME\n\n")
 
-# 1. CHARGEMENT ----
-
+# Read data
 df <- read_csv("data/historical/all_seasons_with_clusters.csv", show_col_types = FALSE)
 
-# Standardize team names (2020-24 uses different abbreviations)
+# Standardize team names
 team_name_mapping <- c(
   "L.A" = "LAK",
   "N.J" = "NJD",
   "S.J" = "SJS",
   "T.B" = "TBL",
-  "ARI" = "UTA"  # Arizona → Utah (franchise relocation)
+  "ARI" = "UTA"
 )
 
 df <- df %>%
   mutate(team = ifelse(team %in% names(team_name_mapping),
-                       team_name_mapping[team],
-                       team))
+                     team_name_mapping[team],
+                     team))
 
 # Load cleaned data with performance metrics
 df_clean <- read_csv("data/cleaned/all_seasons_clean.csv", show_col_types = FALSE)
@@ -43,30 +43,28 @@ cluster_names_map <- c(
   "6" = "Puck Hog & Finish"
 )
 
-cat("Données:", nrow(df), "équipes-saisons\n\n")
+cat("Data:", nrow(df), "team-seasons\n\n")
 
-# 2. GRAPHIQUE 1: NOMBRE D'ÉQUIPES PAR CLUSTER DANS LE TEMPS ----
+# Season order
+season_order <- c("2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025", "2025-2026")
 
-cat("Création: Nombre d'équipes par cluster...\n")
+# Cluster colors
+cluster_colors <- c(
+  "1" = "#e74c3c", "2" = "#3498db", "3" = "#27ae60",
+  "4" = "#9b59b6", "5" = "#f39c12", "6" = "#1abc9c"
+)
 
-# Count teams per cluster per season
+# GRAPH 1: NUMBER OF TEAMS PER CLUSTER
+cat("Creating: Number of teams per cluster...\n")
+
 cluster_counts <- df %>%
   group_by(season_year, cluster) %>%
   summarise(n = n(), .groups = "drop") %>%
   mutate(
     cluster_name = cluster_names_map[as.character(cluster)],
     cluster = factor(cluster)
-  )
-
-# Order seasons chronologically
-season_order <- c("2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025", "2025-2026")
-cluster_counts <- cluster_counts %>%
+  ) %>%
   mutate(season_year = factor(season_year, levels = season_order))
-
-cluster_colors <- c(
-  "1" = "#e74c3c", "2" = "#3498db", "3" = "#27ae60",
-  "4" = "#9b59b6", "5" = "#f39c12", "6" = "#1abc9c"
-)
 
 p_count <- ggplot(cluster_counts, aes(x = season_year, y = n, color = cluster, group = cluster)) +
   geom_line(linewidth = 1.2) +
@@ -93,15 +91,9 @@ p_count <- ggplot(cluster_counts, aes(x = season_year, y = n, color = cluster, g
     legend.title = element_text(size = 12, face = "bold")
   )
 
-ggsave("outputs/figures/10_cluster_counts_evolution.png", p_count,
-       width = 11, height = 7, dpi = 150)
-cat("  outputs/figures/historical_cluster_counts.png\n")
+# GRAPH 2: GOALS/60 PER CLUSTER OVER TIME
+cat("Creating: Goals/60 per cluster...\n")
 
-# 3. GRAPHIQUE 2: GOALS/60 PAR CLUSTER DANS LE TEMPS ----
-
-cat("Création: Goals/60 par cluster...\n")
-
-# Calculate mean goals per 60 per cluster per season
 goals_by_cluster <- df %>%
   group_by(season_year, cluster) %>%
   summarise(
@@ -113,9 +105,7 @@ goals_by_cluster <- df %>%
     cluster_name = cluster_names_map[as.character(cluster)],
     cluster = factor(cluster)
   ) %>%
-  filter(!is.na(goals_per60))
-
-goals_by_cluster <- goals_by_cluster %>%
+  filter(!is.na(goals_per60)) %>%
   mutate(season_year = factor(season_year, levels = season_order))
 
 p_goals <- ggplot(goals_by_cluster, aes(x = season_year, y = goals_per60,
@@ -151,69 +141,26 @@ p_goals <- ggplot(goals_by_cluster, aes(x = season_year, y = goals_per60,
     legend.title = element_text(size = 12, face = "bold")
   )
 
-ggsave("outputs/figures/10_goals_by_cluster_time.png", p_goals,
-       width = 11, height = 7, dpi = 150)
-cat("  outputs/figures/historical_goals_by_cluster.png\n")
+# COMBINE WITH PATCHWORK
+library(patchwork)
 
-# 4. GRAPHIQUE 3: HEATMAP ÉQUIPE × SAISON ----
-
-cat("Création: Heatmap équipe × saison...\n")
-
-# Pivot to wide format: rows = teams, cols = seasons
-heatmap_data <- df %>%
-  select(team, season_year, cluster) %>%
-  mutate(
-    cluster = factor(cluster),
-    cluster_num = as.integer(as.character(cluster)),
-    season_year = factor(season_year, levels = season_order)
-  ) %>%
-  arrange(season_year, cluster_num, team)
-
-# Get teams in 2025-26 and their clusters for ordering
-teams_2025 <- df %>%
-  filter(season_year == "2025-2026") %>%
-  mutate(cluster_num = as.integer(as.character(cluster))) %>%
-  select(team, cluster_num) %>%
-  arrange(cluster_num, team)
-
-# Order teams by their 2025-26 cluster
-heatmap_data <- heatmap_data %>%
-  mutate(team = factor(team, levels = teams_2025$team)) %>%
-  filter(!is.na(cluster))  # Remove rows where team didn't exist in that season
-
-p_heatmap <- ggplot(heatmap_data, aes(x = season_year, y = team, fill = cluster)) +
-  geom_tile(color = "white", linewidth = 0.5) +
-  scale_fill_manual(
-    values = cluster_colors,
-    labels = cluster_names_map[names(cluster_colors)],
-    name = "Cluster",
-    drop = FALSE
-  ) +
-  labs(
-    title = "Team Cluster Assignments Over Time",
-    subtitle = "Teams ordered by 2025-26 cluster | ARI→UTA merged | Rows show cluster stability 2020-2026",
-    x = NULL,
-    y = NULL
-  ) +
-  theme_clean_light() +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    plot.subtitle = element_text(size = 11, color = "grey40"),
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 11, angle = 45, hjust = 1),
-    panel.grid = element_blank(),
-    legend.position = "bottom",
-    legend.text = element_text(size = 11),
-    legend.title = element_text(size = 12, face = "bold")
+p_combined <- p_count / p_goals +
+  plot_annotation(
+    title = "Offensive Archetypes: Evolution Over Time",
+    theme = theme(
+      plot.title = element_text(size = 18, face = "bold", hjust = 0.5)
+    )
   )
 
-ggsave("outputs/figures/10_team_trajectories_heatmap.png", p_heatmap,
-       width = 10, height = 16, dpi = 150)
-cat("  outputs/figures/historical_team_heatmap.png\n")
+# Save
+ggsave("outputs/figures/figure11_cluster_evolution.png", p_combined,
+       width = 11, height = 12, dpi = 150)
 
-# 5. TABLEAU RÉSUMÉ ----
+cat("Saved: outputs/figures/figure11_cluster_evolution.png\n")
+print(p_combined)
 
-cat("\nRÉSUMÉ STATISTIQUE\n\n")
+# SUMMARY TABLE
+cat("\nSTATISTICAL SUMMARY\n\n")
 
 summary_table <- df %>%
   group_by(season_year, cluster) %>%
@@ -235,7 +182,5 @@ summary_table <- df %>%
 print(summary_table %>% mutate(across(where(is.numeric), ~round(., 2))))
 
 write_csv(summary_table, "outputs/tables/historical_summary_by_cluster_season.csv")
-cat("\nFichier sauvegardé:\n")
+cat("\nFile saved:\n")
 cat("  outputs/tables/historical_summary_by_cluster_season.csv\n")
-
-cat("\nScript terminé.\n")

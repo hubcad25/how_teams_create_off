@@ -1,21 +1,21 @@
-# Profile Chart Horizontal: Profil par cluster (cluster focal + autres en gris)
+# FIGURE 7: Team profiles by cluster (horizontal)
+# Shows each team's dimension scores, grouped by cluster
 
 library(tidyverse)
 library(clessnize)
+library(patchwork)
 
-# 1. CHARGEMENT ----
-
+# Read data
 profiles <- read_csv("outputs/tables/cluster_profiles.csv", show_col_types = FALSE)
 df_teams <- read_csv("data/processed/team_clustered.csv", show_col_types = FALSE)
 df_metrics <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE) %>%
   select(team, output_goals_per60)
 
 cluster_colors <- c("#e74c3c", "#3498db", "#27ae60", "#9b59b6",
-                    "#f39c12", "#1abc9c", "#e91e63", "#795548")
+                    "#f39c12", "#1abc9c")
 
 score_cols <- c("Volume", "Qualite", "Penetration", "Rebonds",
                 "Finishing", "RecoveryPossession", "PuckExchanges")
-n_dims <- length(score_cols)
 
 # Cluster names
 cluster_names <- c(
@@ -27,9 +27,7 @@ cluster_names <- c(
   "6" = "Puck Hog & Finish"
 )
 
-# 2. PRÉPARATION DES DONNÉES ----
-
-# Pivoter en format long
+# Prepare data
 radar_data <- profiles %>%
   select(cluster, all_of(score_cols)) %>%
   pivot_longer(cols = all_of(score_cols),
@@ -41,7 +39,7 @@ radar_data <- profiles %>%
   ) %>%
   arrange(cluster, dimension)
 
-# Ajouter label de facette et ordonner par GF/60 moyen
+# Add facet label and order by GF/60 mean
 facet_labels <- df_teams %>%
   left_join(df_metrics, by = "team") %>%
   arrange(cluster, team) %>%
@@ -63,11 +61,10 @@ facet_labels <- df_teams %>%
 radar_data <- radar_data %>%
   left_join(facet_labels %>% select(cluster, label), by = "cluster")
 
-# 3. CRÉER LES FACETS ----
-
+# CREATE FACETS
 create_profile_facet <- function(focal_cl) {
 
-  # Identifier le cluster focal
+  # Identify focal cluster
   focal_cluster_id <- radar_data %>%
     filter(label == focal_cl) %>%
     pull(cluster) %>%
@@ -75,48 +72,51 @@ create_profile_facet <- function(focal_cl) {
 
   focal_color <- cluster_colors[focal_cluster_id]
 
-  # Données de fond (autres clusters)
+  # Background data (other clusters)
   bg_data <- radar_data %>%
     filter(cluster != focal_cluster_id)
 
-  # Données focales
+  # Focal data
   focal_data <- radar_data %>%
     filter(cluster == focal_cluster_id)
 
-  # Créer le plot
+  # Create plot
   p <- ggplot() +
-    # Ligne de référence à y=0
     geom_hline(yintercept = 0, color = "grey80", linewidth = 0.5) +
 
-    # Segments de fond (autres clusters en gris)
+    # Background segments
     geom_segment(
       data = bg_data,
       aes(x = dimension, y = 0, xend = dimension, yend = score, group = cluster),
       inherit.aes = FALSE,
       color = "grey70", linewidth = 2, alpha = 0.2
     ) +
-    # Segments focaux
+
+    # Focal segments
     geom_segment(
       data = focal_data,
       aes(x = dimension, y = 0, xend = dimension, yend = score),
       inherit.aes = FALSE,
       color = focal_color, linewidth = 3.5, alpha = 0.4
     ) +
-    # Points de fond (autres clusters)
+
+    # Background points
     geom_point(
       data = bg_data,
       aes(x = dimension, y = score, group = cluster),
       inherit.aes = FALSE,
       color = "grey60", size = 1.2, alpha = 0.3
     ) +
-    # Points focaux (grands points transparents)
+
+    # Focal points (large transparent)
     geom_point(
       data = focal_data,
       aes(x = dimension, y = score),
       inherit.aes = FALSE,
       color = focal_color, size = 8, alpha = 0.5, shape = 16
     ) +
-    # Points focaux (petit point solide au centre)
+
+    # Focal points (small solid center)
     geom_point(
       data = focal_data,
       aes(x = dimension, y = score),
@@ -146,26 +146,25 @@ create_profile_facet <- function(focal_cl) {
   return(p)
 }
 
-# 4. GÉNÉRER TOUS LES PLOTS ----
-
+# GENERATE ALL PLOTS
 all_labels <- levels(radar_data$label)
 all_plots <- map(all_labels, create_profile_facet)
-
-# Combiner avec patchwork
-library(patchwork)
 
 ncol <- 2
 
 profile_combined <- wrap_plots(all_plots, ncol = ncol) +
   plot_annotation(
-    title = "Profil offensif 5v5 par cluster",
+    title = "Team Offensive Profiles by Cluster",
+    subtitle = "Focal cluster highlighted in color, others in gray | Clusters ordered by mean GF/60",
     theme = theme(
-      plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 11, color = "grey40", hjust = 0.5)
     )
   )
 
-ggsave("outputs/figures/06_teams_by_cluster.png", profile_combined,
+# Save
+ggsave("outputs/figures/figure7_teams_by_cluster_profile.png", profile_combined,
        width = 12, height = 14, dpi = 150)
 
+cat("Saved: outputs/figures/figure7_teams_by_cluster_profile.png\n")
 print(profile_combined)
-cat("\nSauvegardé: outputs/figures/06_teams_by_cluster.png\n")
