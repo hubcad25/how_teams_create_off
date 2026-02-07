@@ -247,6 +247,76 @@ loadings_all <- map_dfr(names(results), function(dim_name) {
 })
 write_csv(loadings_all, "outputs/tables/dimension_loadings.csv")
 
+# Dimension summary table (for README)
+dimension_summary <- map_dfr(names(results), function(dim_name) {
+  result <- results[[dim_name]]
+  vars <- dimensions[[dim_name]]
+  n_vars <- length(vars)
+  data <- df %>% select(all_of(vars))
+  data_scaled <- scale(data)
+
+  # Cronbach's alpha (with check.keys for items with negative correlations)
+  alpha_result <- psych::alpha(data_scaled, check.keys = TRUE)
+  cronbach_alpha <- round(alpha_result$total$std.alpha, 3)
+
+  if (result$n_factors == 1) {
+    # Single factor dimension
+    var_pct <- round(result$var_explained * 100, 1)
+    eigen <- round(result$var_explained * n_vars, 2)
+
+    tibble(
+      dimension = dim_name,
+      dimension_label = dim_name,
+      n_vars = n_vars,
+      n_factors = 1,
+      variance_pct = var_pct,
+      eigenvalue = eigen,
+      cronbach_alpha = cronbach_alpha
+    )
+  } else {
+    # Misc with 2 factors - calculate variance per factor from loadings
+    loadings_mat <- result$loadings
+
+    # Sum of squared loadings for each factor = variance explained
+    ss_loadings <- colSums(loadings_mat^2)
+    var_pcts <- round(ss_loadings / n_vars * 100, 1)
+    eigen_values <- round(ss_loadings, 2)
+
+    list(
+      tibble(
+        dimension = "RecoveryPossession",
+        dimension_label = "Recovery+Possession",
+        n_vars = n_vars,
+        n_factors = 2,
+        variance_pct = var_pcts[1],
+        eigenvalue = eigen_values[1],
+        cronbach_alpha = cronbach_alpha
+      ),
+      tibble(
+        dimension = "PuckExchanges",
+        dimension_label = "Puck Exchanges",
+        n_vars = n_vars,
+        n_factors = 2,
+        variance_pct = var_pcts[2],
+        eigenvalue = eigen_values[2],
+        cronbach_alpha = cronbach_alpha
+      )
+    )
+  }
+}) %>%
+  # Fix dimension labels for French names
+  mutate(
+    dimension_label = case_when(
+      dimension == "Qualite" ~ "Quality",
+      dimension == "Rebonds" ~ "Rebounds",
+      dimension == "Penetration" ~ "Penetration",
+      dimension == "Misc" ~ "Misc",
+      TRUE ~ dimension_label
+    )
+  )
+
+write_csv(dimension_summary, "outputs/tables/dimension_summary.csv")
+
 cat("Files saved:\n")
 cat("  data/processed/team_dimension_scores.csv\n")
 cat("  data/processed/dimension_fa_results.rds\n")

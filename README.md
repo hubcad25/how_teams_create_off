@@ -6,45 +6,44 @@
 
 ## Introduction
 
-**The Problem:** Traditional offensive stats (GF, xG) measure *results*, not *process*. Two teams can have identical xG/60 but create it in completely different ways.
+Traditional offensive stats (GF, xG) measure *results*, not *process*. Two teams can have identical xG/60 but create it in completely different ways.
 
-**Our Approach:** Instead of asking "how much?", we ask "how?". We decompose offensive style into 7 independent dimensions, then identify 6 distinct archetypes that represent the spectrum of NHL offensive philosophies in the 2025-2026 season.
+Instead of asking "how much?", we ask "how?". We decompose offensive style into 7 intuition-based independent dimensions, then identify 6 distinct offensive archetypes across the NHL.
 
-**Lead Visual:** `06_goals_strip.png` - The 6 offensive archetypes visualized by their output
+![Goals per 60 by cluster](outputs/figures/figure6_goals_strip.png)
 
 ---
 
 ## Data & Methodology
 
-[rester concis, textuel, court ici, on veut juste rapidement dire ce qu'on va faire et comment.]
+Data: MoneyPuck 5v5 statistics, 2025-26 season (32 teams)
 
-**Data:** MoneyPuck 5v5 statistics, 2025-26 season (32 teams)
-
-**Variables:** 30+ input variables measuring *how* teams play:
+Variables: 30+ input variables measuring *how* teams play:
 - Shot volume (Corsi, Fenwick, SOG, xG per 60)
 - Shot quality (xG/shot, danger ratios HD/MD/LD)
 - Penetration (completion rate, blocked/missed)
 - Rebounds & second chances
-- Puck recovery (takeaways/giveaways)
-- Faceoffs, zone exits, hits
+- Miscellaneous: puck recovery (takeaways/giveaways), faceoffs, zone exits, hits
 
-**Pipeline:**
-1. **Factor Analysis** (1 factor per dimension) → 7 orthogonal dimensions. Confirmatoire, guidée par des intuitions/concepts connus
-2. **Hierarchical clustering** (Ward dendogram, k=6) → 6 offensive archetypes
+We run a confirmatory factor analysis on each dimension (1 factor per dimension, except Miscellaneous where we force 2 factors). From the factor loadings, we compute dimension scores for each team.
+
+We then apply hierarchical clustering (Ward D2) on these dimension scores. Based on cluster interpretability, we select k=6 archetypes.
 
 ---
 
 ## Dimensions
 
-| Dimension | What It Measures | Key Variables |
-|-----------|------------------|---------------|
-| **Volume** | Shot quantity, pressure | Corsi/60, Fenwick/60, SOG/60, xG/60 |
-| **Quality** | Shot selection | xG/shot, HD/MD/LD ratios |
-| **Penetration** | Getting shots through | SOG/Corsi, blocked rate, missed rate |
-| **Rebounds** | Second chance creation | Rebounds/60, rebound xG share |
-| **Finishing** | Converting vs expected | Sh% vs xSh%, goals above expected |
-| **Recovery+Possession** | Puck recovery, maintaining pressure | Takeaways, giveaways, zone exits |
-| **Puck Exchanges** | Pace, turnover frequency | Giveaways+takeaways, penalties, hits |
+| Dimension | What It Measures | Eigenvalue | Variance Explained | Cronbach's α |
+|-----------|------------------|------------|-------------------|--------------|
+| Volume | Shot quantity, pressure | 5.32 | 88.6% | 0.98 |
+| Quality | Shot selection | 4.19 | 52.4% | 0.87 |
+| Penetration | Getting shots through | 1.67 | 55.7% | 0.68 |
+| Rebounds | Second chance creation | 1.45 | 48.2% | 0.54 |
+| Finishing | Converting vs expected | 3.1 | 62% | 0.86 |
+| Recovery+Possession | Puck recovery, maintaining pressure | 1.75 | 21.9% | 0.52 |
+| Puck Exchanges | Pace, turnover frequency | 1.62 | 20.2% | 0.52 |
+
+*The Miscellaneous dimension tested better with 2 factors (42.2% vs 21.0% variance explained), so we split it into Recovery+Possession (21.9%) and Puck Exchanges (20.2%).
 
 
 ![Dimension loadings](outputs/figures/figure1_dimension_loadings.png)
