@@ -5,7 +5,7 @@ library(tidyverse)
 library(cluster)
 library(dendextend)
 library(patchwork)
-library(clessnize)
+source("scripts/R/00_functions.R")
 
 cat("Creating dendrogram k-selection plot...\n")
 
@@ -64,7 +64,7 @@ dendro_plots <- map(3:7, function(k) {
     scale_x_continuous(expand = expansion(add = 0.5)) +
     scale_y_continuous(expand = expansion(mult = c(0.15, 0.05))) +
     labs(title = sprintf("k = %d  (sil = %.3f, sizes: %s)", k, sil_val, sizes)) +
-    theme_clean_light() +
+    theme_hockey() +
     theme(
       plot.title = element_text(face = "bold", size = 10),
       axis.text = element_blank(),

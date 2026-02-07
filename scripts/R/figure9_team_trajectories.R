@@ -2,7 +2,7 @@
 # Heatmap showing each team's cluster assignment over time
 
 library(tidyverse)
-library(clessnize)
+source("scripts/R/00_functions.R")
 
 cat("TEAM TRAJECTORIES OVER TIME\n\n")
 
@@ -80,7 +80,7 @@ p_heatmap <- ggplot(heatmap_data, aes(x = season_year, y = team, fill = cluster)
     x = NULL,
     y = NULL
   ) +
-  theme_clean_light() +
+  theme_hockey() +
   theme(
     plot.title = element_text(face = "bold", size = 16),
     plot.subtitle = element_text(size = 11, color = "grey40"),

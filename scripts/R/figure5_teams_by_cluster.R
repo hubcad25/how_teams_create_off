@@ -2,7 +2,7 @@
 # Shows each team's dimension scores, grouped by cluster
 
 library(tidyverse)
-library(clessnize)
+source("scripts/R/00_functions.R")
 library(patchwork)
 
 # Read data
@@ -129,7 +129,7 @@ create_profile_facet <- function(focal_cl) {
       breaks = seq(-3, 3, by = 1)
     ) +
 
-    theme_clean_light() +
+    theme_hockey() +
     theme(
       axis.title = element_blank(),
       axis.text.x = element_text(size = 8, face = "bold", color = "grey20", angle = 45, hjust = 1),

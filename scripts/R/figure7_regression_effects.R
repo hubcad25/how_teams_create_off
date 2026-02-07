@@ -2,7 +2,7 @@
 # Shows which dimensions drive GF/60 within each cluster
 
 library(tidyverse)
-library(clessnize)
+source("scripts/R/00_functions.R")
 library(MASS)
 
 cat("Bootstrap regression: dimension effects on GF/60\n\n")
@@ -152,7 +152,7 @@ p_sim_effects <- ggplot(sim_effects,
     y = "Cluster",
     fill = "Coefficient"
   ) +
-  theme_clean_light() +
+  theme_hockey() +
   theme(
     plot.title = element_text(face = "bold", size = 14),
     plot.subtitle = element_text(size = 10, color = "grey40"),

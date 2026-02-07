@@ -2,7 +2,7 @@
 # Shows each team's z-scores across 7 dimensions
 
 library(tidyverse)
-library(clessnize)
+source("scripts/R/00_functions.R")
 
 # Read data
 data <- read_csv("data/processed/team_dimension_scores.csv",
@@ -68,7 +68,7 @@ p1 <- ggplot(data_long, aes(x = dimension, y = team, fill = score)) +
     x = NULL,
     y = NULL
   ) +
-  theme_clean_light() +
+  theme_hockey() +
   theme(
     plot.title = element_text(face = "bold", size = 14),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 10),

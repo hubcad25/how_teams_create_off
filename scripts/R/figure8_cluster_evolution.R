@@ -2,7 +2,7 @@
 # Shows how cluster sizes and performance change over time
 
 library(tidyverse)
-library(clessnize)
+source("scripts/R/00_functions.R")
 
 cat("CLUSTER EVOLUTION OVER TIME\n\n")
 
@@ -80,7 +80,7 @@ p_count <- ggplot(cluster_counts, aes(x = season_year, y = n, color = cluster, g
     y = "Number of Teams",
     color = NULL
   ) +
-  theme_clean_light() +
+  theme_hockey() +
   theme(
     plot.title = element_text(face = "bold", size = 16),
     plot.subtitle = element_text(size = 11, color = "grey40"),
@@ -130,7 +130,7 @@ p_goals <- ggplot(goals_by_cluster, aes(x = season_year, y = goals_per60,
     y = "Goals/60 (5v5)",
     color = NULL
   ) +
-  theme_clean_light() +
+  theme_hockey() +
   theme(
     plot.title = element_text(face = "bold", size = 16),
     plot.subtitle = element_text(size = 11, color = "grey40"),

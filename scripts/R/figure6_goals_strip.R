@@ -2,7 +2,7 @@
 # Strip plot showing offensive production by cluster
 
 library(tidyverse)
-library(clessnize)
+source("scripts/R/00_functions.R")
 library(ggrepel)
 
 # Read data
@@ -91,7 +91,7 @@ p_strip <- ggplot(df_strip, aes(x = output_goals_per60, y = y_dodge, color = clu
     x = "Goals/60 (5v5)",
     y = NULL
   ) +
-  theme_clean_light() +
+  theme_hockey() +
   theme(
     plot.title = element_text(face = "bold", size = 14),
     plot.subtitle = element_text(size = 10, color = "grey40"),

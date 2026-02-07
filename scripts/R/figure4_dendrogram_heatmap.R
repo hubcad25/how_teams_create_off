@@ -3,7 +3,7 @@
 
 library(tidyverse)
 library(cluster)
-library(clessnize)
+source("scripts/R/00_functions.R")
 library(ggdendro)
 library(patchwork)
 
@@ -43,7 +43,7 @@ p_dendro <- ggplot() +
   scale_x_continuous(expand = expansion(add = 0.5)) +
   scale_y_continuous(expand = expansion(mult = c(0.12, 0.05))) +
   labs(title = "Dendrogram (Ward D2) with k=6") +
-  theme_clean_light() +
+  theme_hockey() +
   theme(
     plot.title = element_text(face = "bold", size = 12),
     axis.text = element_blank(),
@@ -87,7 +87,7 @@ p_heat <- ggplot(dim_long, aes(x = as.numeric(team), y = dimension, fill = score
     expand = expansion(add = 0.5)
   ) +
   labs(x = NULL, y = NULL) +
-  theme_clean_light() +
+  theme_hockey() +
   theme(
     axis.text.x = element_text(angle = 0, hjust = 0.5, size = 7),
     axis.text.y = element_text(size = 9),
