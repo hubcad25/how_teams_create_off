@@ -47,14 +47,13 @@
 | **Puck Exchanges** | Pace, turnover frequency | Giveaways+takeaways, penalties, hits |
 
 
-[dans le tableau, on devrait pas parler de Misc avant de les nommer? Puis les nommer après les loadings?]
-[Expliquer qu'on teste 2 facteurs dans la dimension Misc?]
+![Dimension loadings](outputs/figures/figure1_dimension_loadings.png)
 
-Image: 03_dimension_loadings.png
+The Misc dimension splits into 2 factors:
+- **Recovery+Possession**: Takeaways, limiting giveaways, maintaining zone pressure
+- **Puck Exchanges**: High pace, frequent turnovers (high giveaways+takeaways, low hits/penalties)
 
-[interprétation, nommer les 2 dimensions Misc]
-
-Image: 03_dimensions_heatmap.png (en accentuant les valeurs extrêmes)
+![Team offensive profiles](outputs/figures/figure2_dimensions_heatmap.png)
 
 [texte d'interprétation]
 
@@ -64,11 +63,13 @@ Image: 03_dimensions_heatmap.png (en accentuant les valeurs extrêmes)
 
 ### How Many Archetypes?
 
-Image: 04_dendrogram_k.png
+Silhouette analysis suggests **k=6** balances cluster cohesion with interpretability.
 
-[interprétation rapide, pcq on peut pas "comprendre" les clusters ici]
+![Dendrogram k-selection](outputs/figures/figure3_dendrogram_k.png)
 
-Image: 04_dendrogram_heatmap.png [Mais avec dendro coloré k=6]
+The dendrogram with k=6 reveals natural groupings:
+
+![Dendrogram heatmap k=6](outputs/figures/figure4_dendrogram_heatmap.png)
 
 [Donc ici on interprète les clusters selon k=6 et la heatmap en-dessous. Séparer la heatmap par cluster avec facet wrap]
 
@@ -76,7 +77,7 @@ Image: 04_dendrogram_heatmap.png [Mais avec dendro coloré k=6]
 
 ### Interpreting and Naming Archetypes
 
-Image: 06_teams_by_cluster.png [renommer le graph. garder les noms des clusters dans le graph]
+![Team profiles by cluster](outputs/figures/figure5_teams_by_cluster.png)
 
 [Interprétation rapide]
 
@@ -93,11 +94,11 @@ Image: 06_teams_by_cluster.png [renommer le graph. garder les noms des clusters 
 
 ## [What Drives Success? trouver un titre clair pour cette section]
 
-[What are the better archetypes? What drives success?]
+**What actually drives offensive production?**
 
-[On va voir comment avec une variable dépendante qui est purement l'output principal: Goals per 60]
+We measure success by Goals/60—the purest output metric.
 
-Graphique principal: 06_goals_strip.png
+![Goals per 60 by cluster](outputs/figures/figure6_goals_strip.png)
 
 [Interprétation assez in depth]
 [High-Octane Drive est le meilleur en moyenne]
@@ -110,10 +111,9 @@ Graphique principal: 06_goals_strip.png
 
 [What separates above-average from below-average teams in each cluster?]
 
-[Test: bootstrap regression within each clusters (interaction)]
-[Explication de la méthode]
+**Method:** Bootstrap regression (500 obs/cluster) with cluster-specific interactions
 
-Image: 06_regression_effects.png [en colorant pour significativité aussi, on veut vraiment que les effets importants et significatifs sortent]
+![Regression effects by cluster](outputs/figures/figure7_regression_effects.png)
 
 [Interprétation: à travers tlm: rebounds, finishing les plus importants]
 [Puck Hog & Finish: difficile à interpréter évidemment avec 2 équipes, Penetration semble avoir un petit effet positif.]
@@ -130,9 +130,9 @@ Image: 06_regression_effects.png [en colorant pour significativité aussi, on ve
 
 > Method: Apply the 2025-26 clustering model to historical seasons (assuming the 6 archetypes are stable over time)
 
-[explication rapide de comment on s'y prend]
+![Cluster evolution 2020-2026](outputs/figures/figure8_cluster_evolution.png)
 
-[On pensera à quelles graphs mettre plus tard]
+![Team trajectories heatmap](outputs/figures/figure9_team_trajectories.png)
 
 ---
 
