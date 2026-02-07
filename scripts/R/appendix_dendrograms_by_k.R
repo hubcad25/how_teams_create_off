@@ -39,15 +39,18 @@ for (i in seq_along(k_range)) {
 dend <- as.dendrogram(hc)
 
 cluster_palettes <- list(
-  "3" = c("#e74c3c", "#3498db", "#27ae60"),
-  "4" = c("#e74c3c", "#3498db", "#27ae60", "#9b59b6"),
-  "5" = c("#e74c3c", "#3498db", "#27ae60", "#9b59b6", "#f39c12"),
-  "6" = c("#e74c3c", "#3498db", "#27ae60", "#9b59b6", "#f39c12", "#1abc9c"),
-  "7" = c("#e74c3c", "#3498db", "#27ae60", "#9b59b6", "#f39c12", "#1abc9c", "#e91e63")
+  "3" = unname(cluster_colors[1:3]),
+  "4" = unname(cluster_colors[1:4]),
+  "5" = unname(cluster_colors[1:5]),
+  "6" = unname(cluster_colors),
+  "7" = c(unname(cluster_colors), "#5C6B73")
 )
 
 dendro_plots <- map(3:7, function(k) {
-  dend_k <- color_branches(dend, k = k, col = cluster_palettes[[as.character(k)]])
+  # Reorder colors to match dendrogram branch order (left to right)
+  dend_order <- unique(cutree(hc, k = k)[hc$order])
+  pal <- cluster_palettes[[as.character(k)]]
+  dend_k <- color_branches(dend, k = k, col = pal[dend_order])
   ggd <- as.ggdend(dend_k)
 
   sil_val <- sil_results$silhouette[sil_results$k == k]

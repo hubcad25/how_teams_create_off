@@ -33,26 +33,10 @@ df <- df %>%
     by = c("team", "season_year")
   )
 
-# Cluster names
-cluster_names_map <- c(
-  "1" = "Crash & Hope",
-  "2" = "High-Octane Drive",
-  "3" = "Streaky Offense",
-  "4" = "Selective Shooting",
-  "5" = "Lane Creation",
-  "6" = "Puck Hog & Finish"
-)
-
 cat("Data:", nrow(df), "team-seasons\n\n")
 
 # Season order
 season_order <- c("2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025", "2025-2026")
-
-# Cluster colors
-cluster_colors <- c(
-  "1" = "#e74c3c", "2" = "#3498db", "3" = "#27ae60",
-  "4" = "#9b59b6", "5" = "#f39c12", "6" = "#1abc9c"
-)
 
 # GRAPH 1: NUMBER OF TEAMS PER CLUSTER
 cat("Creating: Number of teams per cluster...\n")
@@ -61,7 +45,7 @@ cluster_counts <- df %>%
   group_by(season_year, cluster) %>%
   summarise(n = n(), .groups = "drop") %>%
   mutate(
-    cluster_name = cluster_names_map[as.character(cluster)],
+    cluster_name = cluster_names[as.character(cluster)],
     cluster = factor(cluster)
   ) %>%
   mutate(season_year = factor(season_year, levels = season_order))
@@ -71,7 +55,7 @@ p_count <- ggplot(cluster_counts, aes(x = season_year, y = n, color = cluster, g
   geom_point(size = 3.5) +
   scale_color_manual(
     values = cluster_colors,
-    labels = cluster_names_map[names(cluster_colors)]
+    labels = cluster_names[names(cluster_colors)]
   ) +
   labs(
     title = "Cluster Size Over Time",
@@ -102,7 +86,7 @@ goals_by_cluster <- df %>%
     .groups = "drop"
   ) %>%
   mutate(
-    cluster_name = cluster_names_map[as.character(cluster)],
+    cluster_name = cluster_names[as.character(cluster)],
     cluster = factor(cluster)
   ) %>%
   filter(!is.na(goals_per60)) %>%
@@ -116,7 +100,7 @@ p_goals <- ggplot(goals_by_cluster, aes(x = season_year, y = goals_per60,
              linetype = "dashed", color = "grey50", linewidth = 0.5) +
   scale_color_manual(
     values = cluster_colors,
-    labels = cluster_names_map[names(cluster_colors)]
+    labels = cluster_names[names(cluster_colors)]
   ) +
   scale_size_continuous(
     name = "Teams",
@@ -173,7 +157,7 @@ summary_table <- df %>%
     .groups = "drop"
   ) %>%
   mutate(
-    cluster_name = cluster_names_map[as.character(cluster)],
+    cluster_name = cluster_names[as.character(cluster)],
     cluster = as.integer(as.character(cluster))
   ) %>%
   arrange(season_year, cluster) %>%

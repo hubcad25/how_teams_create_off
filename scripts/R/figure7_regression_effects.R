@@ -12,16 +12,6 @@ df_teams <- read_csv("data/processed/team_clustered.csv", show_col_types = FALSE
   mutate(cluster = factor(cluster))
 df_metrics <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE)
 
-# Cluster names
-cluster_names_map <- c(
-  "1" = "Crash & Hope",
-  "2" = "High-Octane Drive",
-  "3" = "Streaky Offense",
-  "4" = "Selective Shooting",
-  "5" = "Lane Creation",
-  "6" = "Puck Hog & Finish"
-)
-
 score_cols <- c("Volume", "Qualite", "Penetration", "Rebonds",
                 "Finishing", "RecoveryPossession", "PuckExchanges")
 
@@ -118,7 +108,7 @@ sim_effects <- sim_effects %>%
   mutate(
     cluster_label = ifelse(cluster == "Base (no interaction)",
                           "Base (no interaction)",
-                          cluster_names_map[as.character(cluster)])
+                          cluster_names[as.character(cluster)])
   )
 
 # Order clusters

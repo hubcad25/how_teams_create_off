@@ -11,19 +11,6 @@ df_teams <- read_csv("data/processed/team_clustered.csv", show_col_types = FALSE
 
 df_metrics <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE)
 
-# Cluster names
-cluster_names_map <- c(
-  "1" = "Crash & Hope",
-  "2" = "High-Octane Drive",
-  "3" = "Streaky Offense",
-  "4" = "Selective Shooting",
-  "5" = "Lane Creation",
-  "6" = "Puck Hog & Finish"
-)
-
-cluster_colors <- c("#e74c3c", "#3498db", "#27ae60", "#9b59b6",
-                    "#f39c12", "#1abc9c")
-
 # Join data
 df_output <- df_teams %>%
   left_join(df_metrics %>% select(team, output_goals_per60), by = "team")
@@ -83,7 +70,7 @@ p_strip <- ggplot(df_strip, aes(x = output_goals_per60, y = y_dodge, color = clu
   scale_fill_manual(values = cluster_colors[1:6]) +
   scale_y_continuous(
     breaks = seq_along(cluster_order),
-    labels = cluster_names_map[rev(as.character(cluster_order))]
+    labels = cluster_names[rev(as.character(cluster_order))]
   ) +
   labs(
     title = "Goals/60 by Offensive Archetype",

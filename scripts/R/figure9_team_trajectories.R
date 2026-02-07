@@ -26,21 +26,6 @@ df <- df %>%
 # Season order
 season_order <- c("2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025", "2025-2026")
 
-# Cluster names and colors
-cluster_names_map <- c(
-  "1" = "Crash & Hope",
-  "2" = "High-Octane Drive",
-  "3" = "Streaky Offense",
-  "4" = "Selective Shooting",
-  "5" = "Lane Creation",
-  "6" = "Puck Hog & Finish"
-)
-
-cluster_colors <- c(
-  "1" = "#e74c3c", "2" = "#3498db", "3" = "#27ae60",
-  "4" = "#9b59b6", "5" = "#f39c12", "6" = "#1abc9c"
-)
-
 # PREPARE DATA FOR HEATMAP
 heatmap_data <- df %>%
   dplyr::select(team, season_year, cluster) %>%
@@ -70,7 +55,7 @@ p_heatmap <- ggplot(heatmap_data, aes(x = season_year, y = team, fill = cluster)
   geom_tile(color = "white", linewidth = 0.5) +
   scale_fill_manual(
     values = cluster_colors,
-    labels = cluster_names_map[names(cluster_colors)],
+    labels = cluster_names[names(cluster_colors)],
     name = "Cluster",
     drop = FALSE
   ) +
@@ -128,7 +113,7 @@ stable_teams <- stability_summary %>%
     df %>% filter(season_year == "2025-2026") %>% dplyr::select(team, cluster),
     by = "team"
   ) %>%
-  mutate(cluster_name = cluster_names_map[as.character(cluster)]) %>%
+  mutate(cluster_name = cluster_names[as.character(cluster)]) %>%
   arrange(cluster) %>%
   dplyr::select(team, cluster_name)
 
