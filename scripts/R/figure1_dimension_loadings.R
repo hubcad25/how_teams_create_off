@@ -55,8 +55,8 @@ p_loadings <- ggplot(loadings, aes(x = reorder(label, loading), y = loading,
   )
 
 # Save
-ggsave("outputs/figures/figure3_dimension_loadings.png", p_loadings,
+ggsave("outputs/figures/figure1_dimension_loadings.png", p_loadings,
        width = 13, height = 12, dpi = 150)
 
-cat("Saved: outputs/figures/figure3_dimension_loadings.png\n")
+cat("Saved: outputs/figures/figure1_dimension_loadings.png\n")
 print(p_loadings)

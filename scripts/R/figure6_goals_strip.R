@@ -100,8 +100,8 @@ p_strip <- ggplot(df_strip, aes(x = output_goals_per60, y = y_dodge, color = clu
   )
 
 # Save
-ggsave("outputs/figures/figure8_goals_by_cluster_strip.png", p_strip,
+ggsave("outputs/figures/figure6_goals_strip.png", p_strip,
        width = 11, height = 7, dpi = 150)
 
-cat("Saved: outputs/figures/figure8_goals_by_cluster_strip.png\n")
+cat("Saved: outputs/figures/figure6_goals_strip.png\n")
 print(p_strip)

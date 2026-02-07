@@ -106,17 +106,17 @@ cat("║  PART 4: FIGURES - DIMENSIONS                                  ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
 success$fig1 <- run_script(
-  "figure1_dimensions_heatmap.R",
+  "03_dimensions_heatmap.R",
   "Figure 1: Team offensive profiles (heatmap)"
 )
 
 success$fig2 <- run_script(
-  "figure2_dimensions_parallel.R",
+  "02_dimensions_parallel.R",
   "Figure 2: Parallel coordinates plot"
 )
 
 success$fig3 <- run_script(
-  "figure3_dimension_loadings.R",
+  "03_dimension_loadings.R",
   "Figure 3: FA loadings by dimension"
 )
 
@@ -130,12 +130,12 @@ cat("║  PART 5: FIGURES - CLUSTERING                                   ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
 success$fig4 <- run_script(
-  "figure4_dendrogram_k_selection.R",
+  "04_dendrogram_k.R",
   "Figure 4: Dendrogram k-selection (k=3-7)"
 )
 
 success$fig5 <- run_script(
-  "figure5_dendrogram_heatmap_k6.R",
+  "04_dendrogram_heatmap.R",
   "Figure 5: Dendrogram + heatmap (k=6)"
 )
 
@@ -149,12 +149,12 @@ cat("║  PART 6: FIGURES - CLUSTER PROFILES                             ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
 success$fig6 <- run_script(
-  "figure6_cluster_profiles_bars.R",
+  "06_cluster_profiles_bars.R",
   "Figure 6: Cluster profiles (bar chart)"
 )
 
 success$fig7 <- run_script(
-  "figure7_teams_by_cluster_profile.R",
+  "06_teams_by_cluster.R",
   "Figure 7: Team profiles by cluster"
 )
 
@@ -168,23 +168,23 @@ cat("║  PART 7: FIGURES - PERFORMANCE ANALYSIS                         ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
 success$fig8 <- run_script(
-  "figure8_goals_by_cluster_strip.R",
+  "06_goals_strip.R",
   "Figure 8: Goals/60 by cluster (LEAD VISUAL) ★"
 )
 
 success$fig9 <- run_script(
-  "figure9_regression_effects.R",
+  "06_regression_effects.R",
   "Figure 9: Bootstrap regression effects"
 )
 
 success$fig10 <- run_script(
-  "figure10_finishing_vs_goals.R",
+  "10_finishing_vs_goals.R",
   "Figure 10: Finishing vs Goals/60"
 )
 
 # Appendix
 success$app1 <- run_script(
-  "appendix_goals_vs_xg_scatter.R",
+  "appendix_goals_vs_xg.R",
   "Appendix: Goals vs xG scatter"
 )
 
@@ -198,12 +198,12 @@ cat("║  PART 8: FIGURES - HISTORICAL EVOLUTION                         ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
 success$fig11 <- run_script(
-  "figure11_cluster_evolution.R",
+  "10_cluster_evolution.R",
   "Figure 11: Cluster evolution 2020-2026"
 )
 
 success$fig12 <- run_script(
-  "figure12_team_trajectories.R",
+  "10_team_trajectories.R",
   "Figure 12: Team trajectories heatmap"
 )
 

@@ -54,21 +54,19 @@ p_dendro <- ggplot() +
   )
 
 # CREATE HEATMAP (ordered by dendrogram)
-# First rename French columns to English
 dim_long <- df_dim %>%
-  rename(
-    Quality = Qualite,
-    Rebounds = Rebonds,
-    `RecoveryPossession` = RecoveryPossession,
-    `PuckExchanges` = PuckExchanges
+  mutate(
+    Volume = dim_english["Volume"],
+    Qualite = dim_english["Qualite"],
+    Penetration = dim_english["Penetration"],
+    Rebonds = dim_english["Rebonds"],
+    RecoveryPossession = dim_english["RecoveryPossession"],
+    PuckExchanges = dim_english["PuckExchanges"]
   ) %>%
-  pivot_longer(cols = c(Volume, Quality, Penetration, Rebounds,
-                       Finishing, RecoveryPossession, PuckExchanges),
-               names_to = "dimension", values_to = "score") %>%
+  pivot_longer(cols = all_of(names(dim_english)), names_to = "dimension", values_to = "score") %>%
   mutate(
     team = factor(team, levels = team_order),
-    dimension = factor(dimension, levels = c("Volume", "Quality", "Penetration", "Rebounds",
-                                             "Finishing", "RecoveryPossession", "PuckExchanges"))
+    dimension = factor(dimension, levels = dim_english)
   )
 
 # Symmetric limits based on max absolute value
@@ -96,13 +94,6 @@ p_heat <- ggplot(dim_long, aes(x = as.numeric(team), y = dimension, fill = score
     expand = expansion(add = 0.5)
   ) +
   labs(x = NULL, y = NULL) +
-  scale_y_discrete(labels = c("Volume" = "Volume",
-                              "Quality" = "Quality",
-                              "Penetration" = "Penetration",
-                              "Rebounds" = "Rebounds",
-                              "Finishing" = "Finishing",
-                              "RecoveryPossession" = "Recovery+Possession",
-                              "PuckExchanges" = "Puck exchanges")) +
   theme_clean_light() +
   theme(
     axis.text.x = element_text(angle = 0, hjust = 0.5, size = 7),
@@ -117,8 +108,8 @@ p_combined <- p_dendro / p_heat +
   plot_layout(heights = c(1, 2))
 
 # Save
-ggsave("outputs/figures/figure5_dendrogram_heatmap_k6.png", p_combined,
+ggsave("outputs/figures/figure4_dendrogram_heatmap.png", p_combined,
        width = 14, height = 10, dpi = 150)
 
-cat("Saved: outputs/figures/figure5_dendrogram_heatmap_k6.png\n")
+cat("Saved: outputs/figures/figure4_dendrogram_heatmap.png\n")
 print(p_combined)

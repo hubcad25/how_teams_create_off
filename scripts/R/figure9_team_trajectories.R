@@ -43,7 +43,7 @@ cluster_colors <- c(
 
 # PREPARE DATA FOR HEATMAP
 heatmap_data <- df %>%
-  dplyr::select(team, season_year, cluster) %>%
+  select(team, season_year, cluster) %>%
   mutate(
     cluster = factor(cluster),
     cluster_num = as.integer(as.character(cluster)),
@@ -55,7 +55,7 @@ heatmap_data <- df %>%
 teams_2025 <- df %>%
   filter(season_year == "2025-2026") %>%
   mutate(cluster_num = as.integer(as.character(cluster))) %>%
-  dplyr::select(team, cluster_num) %>%
+  select(team, cluster_num) %>%
   arrange(cluster_num, team)
 
 # Order teams by their 2025-26 cluster
@@ -93,10 +93,10 @@ p_heatmap <- ggplot(heatmap_data, aes(x = season_year, y = team, fill = cluster)
   )
 
 # Save
-ggsave("outputs/figures/figure12_team_trajectories.png", p_heatmap,
+ggsave("outputs/figures/figure9_team_trajectories.png", p_heatmap,
        width = 10, height = 16, dpi = 150)
 
-cat("Saved: outputs/figures/figure12_team_trajectories.png\n")
+cat("Saved: outputs/figures/figure9_team_trajectories.png\n")
 print(p_heatmap)
 
 # STABILITY ANALYSIS

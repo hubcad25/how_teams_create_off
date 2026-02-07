@@ -78,11 +78,11 @@ p1 <- ggplot(data_long, aes(x = dimension, y = team, fill = score)) +
   )
 
 # Save
-ggsave("outputs/figures/figure1_dimensions_heatmap.png",
+ggsave("outputs/figures/figure2_dimensions_heatmap.png",
        plot = p1,
        width = 9,
        height = 12,
        dpi = 150)
 
-cat("Saved: outputs/figures/figure1_dimensions_heatmap.png\n")
+cat("Saved: outputs/figures/figure2_dimensions_heatmap.png\n")
 print(p1)

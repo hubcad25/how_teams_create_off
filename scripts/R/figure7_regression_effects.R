@@ -3,6 +3,7 @@
 
 library(tidyverse)
 library(clessnize)
+library(MASS)
 
 cat("Bootstrap regression: dimension effects on GF/60\n\n")
 
@@ -26,7 +27,7 @@ score_cols <- c("Volume", "Qualite", "Penetration", "Rebonds",
 
 # Join data
 df_output <- df_teams %>%
-  left_join(df_metrics %>% dplyr::select(team, output_goals_per60, input_xGoals_per60), by = "team")
+  left_join(df_metrics %>% select(team, output_goals_per60, input_xGoals_per60), by = "team")
 
 # GENERATE SIMULATED DATA (bootstrap)
 set.seed(42)
@@ -50,7 +51,7 @@ df_sim <- map_dfr(levels(df_output$cluster), function(cl) {
   lam <- case_when(n_obs <= 3 ~ 0.7, n_obs <= 5 ~ 0.5, TRUE ~ 0.3)
   Sigma <- shrink_cov(sub, lambda = lam)
 
-  synth <- MASS::mvrnorm(n = N_SIM, mu = mu, Sigma = Sigma)
+  synth <- mvrnorm(n = N_SIM, mu = mu, Sigma = Sigma)
   as_tibble(synth) %>% mutate(cluster = cl)
 })
 
@@ -160,11 +161,11 @@ p_sim_effects <- ggplot(sim_effects,
   )
 
 # Save
-ggsave("outputs/figures/figure9_regression_effects.png", p_sim_effects,
+ggsave("outputs/figures/figure7_regression_effects.png", p_sim_effects,
        width = 11, height = 6, dpi = 150)
 
 write_csv(sim_effects, "outputs/tables/sim_regression_effects.csv")
 
-cat("Saved: outputs/figures/figure9_regression_effects.png\n")
+cat("Saved: outputs/figures/figure7_regression_effects.png\n")
 cat("Saved: outputs/tables/sim_regression_effects.csv\n")
 print(p_sim_effects)

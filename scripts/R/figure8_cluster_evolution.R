@@ -29,7 +29,7 @@ df_clean <- read_csv("data/cleaned/all_seasons_clean.csv", show_col_types = FALS
 # Join cluster assignments with performance metrics
 df <- df %>%
   left_join(
-    df_clean %>% dplyr::select(team, season_year, output_goals_per60, input_xGoals_per60, output_goals_pct),
+    df_clean %>% select(team, season_year, output_goals_per60, input_xGoals_per60, output_goals_pct),
     by = c("team", "season_year")
   )
 
@@ -153,10 +153,10 @@ p_combined <- p_count / p_goals +
   )
 
 # Save
-ggsave("outputs/figures/figure11_cluster_evolution.png", p_combined,
+ggsave("outputs/figures/figure8_cluster_evolution.png", p_combined,
        width = 11, height = 12, dpi = 150)
 
-cat("Saved: outputs/figures/figure11_cluster_evolution.png\n")
+cat("Saved: outputs/figures/figure8_cluster_evolution.png\n")
 print(p_combined)
 
 # SUMMARY TABLE
