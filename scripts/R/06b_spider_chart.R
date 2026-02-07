@@ -161,11 +161,11 @@ spider_combined <- wrap_plots(all_plots, ncol = ncol) +
     )
   )
 
-ggsave("outputs/figures/cluster_spider.png", spider_combined,
-       width = 14, height = 10, dpi = 150)
+# ggsave("outputs/figures/cluster_spider.png", spider_combined,
+#        width = 14, height = 10, dpi = 150)
 
 print(spider_combined)
-cat("\nSauvegardé: outputs/figures/cluster_spider.png\n")
+cat("\n[SKIPPED] outputs/figures/cluster_spider.png (obsolete, see 06_cluster_profiles.png)\n")
 
 # 6. VERSION SIMPLE (JUSTE DES POINTS) ----
 
@@ -238,11 +238,11 @@ spider_simple <- wrap_plots(all_simple_plots, ncol = ncol) +
     )
   )
 
-ggsave("outputs/figures/cluster_spider_simple.png", spider_simple,
-       width = 14, height = 10, dpi = 150)
+# ggsave("outputs/figures/cluster_spider_simple.png", spider_simple,
+#        width = 14, height = 10, dpi = 150)
 
 print(spider_simple)
-cat("Sauvegardé: outputs/figures/cluster_spider_simple.png\n")
+cat("[SKIPPED] outputs/figures/cluster_spider_simple.png (obsolete)\n")
 
 # 7. VERSION AVEC GEOM_SEGMENT (rayons du centre) ----
 
@@ -329,8 +329,8 @@ spider_segments <- wrap_plots(all_segment_plots, ncol = ncol) +
     )
   )
 
-ggsave("outputs/figures/cluster_spider_segments.png", spider_segments,
-       width = 14, height = 10, dpi = 150)
+# ggsave("outputs/figures/cluster_spider_segments.png", spider_segments,
+#        width = 14, height = 10, dpi = 150)
 
 print(spider_segments)
-cat("Sauvegardé: outputs/figures/cluster_spider_segments.png\n")
+cat("[SKIPPED] outputs/figures/cluster_spider_segments.png (obsolete)\n")

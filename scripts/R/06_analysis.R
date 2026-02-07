@@ -73,7 +73,7 @@ p_loadings <- ggplot(loadings, aes(x = reorder(label, loading), y = loading,
     axis.text.y = element_text(size = 9)
   )
 
-ggsave("outputs/figures/dimension_loadings.png", p_loadings,
+ggsave("outputs/figures/03_dimension_loadings.png", p_loadings,
        width = 13, height = 12, dpi = 150)
 cat("  outputs/figures/dimension_loadings.png\n\n")
 
@@ -114,7 +114,7 @@ p_heatmap <- ggplot(profiles_long, aes(x = Dimension, y = factor(cluster), fill 
     axis.text.y = element_text(size = 12)
   )
 
-ggsave("outputs/figures/cluster_heatmap.png", p_heatmap, width = 10, height = 6, dpi = 150)
+ggsave("outputs/figures/06_cluster_heatmap.png", p_heatmap, width = 10, height = 6, dpi = 150)
 
 # 3. BARPLOT PAR CLUSTER ----
 
@@ -138,7 +138,7 @@ p_bars <- ggplot(profiles_long, aes(x = Dimension, y = Score, fill = Score > 0))
     panel.border = element_rect(color = "grey85", fill = NA, linewidth = 0.5)
   )
 
-ggsave("outputs/figures/cluster_bars.png", p_bars, width = 12, height = 8, dpi = 150)
+ggsave("outputs/figures/06_cluster_profiles.png", p_bars, width = 12, height = 8, dpi = 150)
 
 # 4. SCATTER: 2 DIMENSIONS PRINCIPALES ----
 
@@ -163,7 +163,7 @@ p_scatter <- ggplot(df, aes(x = .data[[dim1]], y = .data[[dim2]], color = cluste
   theme_clean_light() +
   theme(plot.title = element_text(face = "bold"))
 
-ggsave("outputs/figures/cluster_scatter_main.png", p_scatter, width = 11, height = 8, dpi = 150)
+ggsave("outputs/figures/06_scatter_main.png", p_scatter, width = 11, height = 8, dpi = 150)
 
 # 5. SCATTER: GOALS/60 vs xG/60 PAR CLUSTER ----
 
@@ -192,7 +192,7 @@ p_goals_xg <- ggplot(df_output, aes(x = input_xGoals_per60, y = output_goals_per
     plot.subtitle = element_text(size = 10, color = "grey40")
   )
 
-ggsave("outputs/figures/cluster_goals_vs_xg.png", p_goals_xg, width = 11, height = 8, dpi = 150)
+ggsave("outputs/figures/06_goals_vs_xg.png", p_goals_xg, width = 11, height = 8, dpi = 150)
 cat("  outputs/figures/cluster_goals_vs_xg.png\n")
 
 # 5b. STRIP PLOT: GOALS/60 PAR CLUSTER ----
@@ -261,7 +261,7 @@ p_strip <- ggplot(df_strip, aes(x = output_goals_per60, y = y_dodge, color = clu
     panel.grid.major.y = element_blank()
   )
 
-ggsave("outputs/figures/cluster_strip_goals.png", p_strip, width = 11, height = 7, dpi = 150)
+ggsave("outputs/figures/06_goals_strip.png", p_strip, width = 11, height = 7, dpi = 150)
 cat("  outputs/figures/cluster_strip_goals.png\n")
 
 # 6. RÉGRESSION SUR DONNÉES SIMULÉES (BOOTSTRAP PARAMÉTRIQUE) ----
@@ -335,7 +335,7 @@ sim_effects <- map_dfr(levels(df_sim$cluster), function(cl) {
     tibble(cluster = cl, dimension = dim, effect = base + interact)
   })
 }) %>%
-  mutate(cluster = factor(cluster),
+  mutate(cluster = factor(cluster, levels = c("2", "6", "4", "3", "1", "5")),
          dimension = factor(dimension, levels = score_cols))
 
 # Ajouter les coefficients de base (modèle sans interaction)
@@ -394,7 +394,7 @@ p_sim_effects <- ggplot(sim_effects,
     axis.text.y = element_text(size = 12)
   )
 
-ggsave("outputs/figures/cluster_sim_effects.png", p_sim_effects,
+ggsave("outputs/figures/06_regression_effects.png", p_sim_effects,
        width = 11, height = 6, dpi = 150)
 cat("  outputs/figures/cluster_sim_effects.png\n")
 

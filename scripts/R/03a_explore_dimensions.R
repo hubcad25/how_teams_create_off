@@ -79,7 +79,7 @@ p1 <- ggplot(data_long, aes(x = dimension, y = team, fill = score)) +
   )
 
 # Save heatmap
-ggsave("outputs/figures/explore_dim_heatmap.png",
+ggsave("outputs/figures/03_dimensions_heatmap.png",
        plot = p1,
        width = 9,
        height = 12,
@@ -153,7 +153,7 @@ if (has_ggrepel) {
 }
 
 # Save parallel coordinates
-ggsave("outputs/figures/explore_dim_parallel.png",
+ggsave("outputs/figures/03_dimensions_parallel.png",
        plot = p2,
        width = 11,
        height = 7,

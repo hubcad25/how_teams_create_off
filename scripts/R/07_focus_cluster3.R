@@ -98,7 +98,7 @@ p <- ggplot(all_data, aes(x = Finishing, y = output_goals_per60)) +
 
 # 4. SAUVEGARDER ----
 
-ggsave("outputs/figures/all_clusters_finishing_gf60.png", p,
+ggsave("outputs/figures/07_cluster3_finishing.png", p,
        width = 12, height = 8, dpi = 150)
 
 print(p)

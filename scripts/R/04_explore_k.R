@@ -145,7 +145,7 @@ p_heat <- ggplot(dim_long, aes(x = as.numeric(team), y = dimension, fill = score
 p_combined <- p_dendro / p_heat +
   plot_layout(heights = c(1, 2))
 
-ggsave("outputs/figures/dendro_heatmap.png", p_combined,
+ggsave("outputs/figures/04_dendrogram_heatmap.png", p_combined,
        width = 14, height = 10, dpi = 150)
 
 # 5. DENDROGRAMMES COLORÉS PAR K (3 à 7) ----
@@ -191,7 +191,7 @@ dendro_plots <- map(3:7, function(k) {
 
 p_all_k <- wrap_plots(dendro_plots, ncol = 1)
 
-ggsave("outputs/figures/dendro_by_k.png", p_all_k,
+ggsave("outputs/figures/04_dendrogram_k.png", p_all_k,
        width = 14, height = 18, dpi = 150)
 
 # 6. HEATMAP FACET PAR CLUSTER (k=6) ----
@@ -258,7 +258,7 @@ p_facet <- ggplot(facet_long, aes(x = dimension, y = team, fill = score)) +
     panel.grid = element_blank()
   )
 
-ggsave("outputs/figures/heatmap_clusters_k6.png", p_facet,
+ggsave("outputs/figures/05_clusters_k6_heatmap.png", p_facet,
        width = 16, height = 12, dpi = 150)
 
 # 7. SAUVEGARDE ----

@@ -98,7 +98,7 @@ p <- ggplot(cluster5_data, aes(x = score, y = output_goals_per60)) +
 
 # 4. SAUVEGARDER ----
 
-ggsave("outputs/figures/cluster5_dimensions_gf60.png", p,
+ggsave("outputs/figures/08_cluster5_dimensions.png", p,
        width = 14, height = 6, dpi = 150)
 
 print(p)

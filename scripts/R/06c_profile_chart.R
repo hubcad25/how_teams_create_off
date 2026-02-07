@@ -164,8 +164,8 @@ profile_combined <- wrap_plots(all_plots, ncol = ncol) +
     )
   )
 
-ggsave("outputs/figures/cluster_profile.png", profile_combined,
+ggsave("outputs/figures/06_teams_by_cluster.png", profile_combined,
        width = 12, height = 14, dpi = 150)
 
 print(profile_combined)
-cat("\nSauvegardé: outputs/figures/cluster_profile.png\n")
+cat("\nSauvegardé: outputs/figures/06_teams_by_cluster.png\n")

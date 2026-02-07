@@ -93,7 +93,7 @@ p_count <- ggplot(cluster_counts, aes(x = season_year, y = n, color = cluster, g
     legend.title = element_text(size = 12, face = "bold")
   )
 
-ggsave("outputs/figures/historical_cluster_counts.png", p_count,
+ggsave("outputs/figures/10_cluster_counts_evolution.png", p_count,
        width = 11, height = 7, dpi = 150)
 cat("  outputs/figures/historical_cluster_counts.png\n")
 
@@ -151,7 +151,7 @@ p_goals <- ggplot(goals_by_cluster, aes(x = season_year, y = goals_per60,
     legend.title = element_text(size = 12, face = "bold")
   )
 
-ggsave("outputs/figures/historical_goals_by_cluster.png", p_goals,
+ggsave("outputs/figures/10_goals_by_cluster_time.png", p_goals,
        width = 11, height = 7, dpi = 150)
 cat("  outputs/figures/historical_goals_by_cluster.png\n")
 
@@ -207,7 +207,7 @@ p_heatmap <- ggplot(heatmap_data, aes(x = season_year, y = team, fill = cluster)
     legend.title = element_text(size = 12, face = "bold")
   )
 
-ggsave("outputs/figures/historical_team_heatmap.png", p_heatmap,
+ggsave("outputs/figures/10_team_trajectories_heatmap.png", p_heatmap,
        width = 10, height = 16, dpi = 150)
 cat("  outputs/figures/historical_team_heatmap.png\n")
 
