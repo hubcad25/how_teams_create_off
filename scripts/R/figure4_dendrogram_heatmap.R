@@ -55,17 +55,10 @@ p_dendro <- ggplot() +
 
 # CREATE HEATMAP (ordered by dendrogram)
 dim_long <- df_dim %>%
-  mutate(
-    Volume = dim_english["Volume"],
-    Qualite = dim_english["Qualite"],
-    Penetration = dim_english["Penetration"],
-    Rebonds = dim_english["Rebonds"],
-    RecoveryPossession = dim_english["RecoveryPossession"],
-    PuckExchanges = dim_english["PuckExchanges"]
-  ) %>%
   pivot_longer(cols = all_of(names(dim_english)), names_to = "dimension", values_to = "score") %>%
   mutate(
     team = factor(team, levels = team_order),
+    dimension = dplyr::recode(dimension, !!!dim_english),
     dimension = factor(dimension, levels = dim_english)
   )
 

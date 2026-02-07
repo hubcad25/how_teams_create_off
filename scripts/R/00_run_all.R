@@ -18,6 +18,7 @@ dir.create("outputs/tables", showWarnings = FALSE, recursive = TRUE)
 # Timer
 start_time <- Sys.time()
 script_dir <- here::here("scripts/R")
+root_dir <- here::here()
 
 # Helper function to run script
 run_script <- function(script_name, description) {
@@ -27,6 +28,10 @@ run_script <- function(script_name, description) {
   script_path <- file.path(script_dir, script_name)
 
   tryCatch({
+    # Change to root directory so relative paths work
+    old_wd <- setwd(root_dir)
+    on.exit(setwd(old_wd), add = TRUE)
+
     source(script_path, local = TRUE, echo = FALSE)
     cat(sprintf("✓ %s complete\n", script_name))
     return(TRUE)
@@ -106,18 +111,13 @@ cat("║  PART 4: FIGURES - DIMENSIONS                                  ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
 success$fig1 <- run_script(
-  "03_dimensions_heatmap.R",
-  "Figure 1: Team offensive profiles (heatmap)"
+  "figure1_dimension_loadings.R",
+  "Figure 1: Dimension loadings"
 )
 
 success$fig2 <- run_script(
-  "02_dimensions_parallel.R",
-  "Figure 2: Parallel coordinates plot"
-)
-
-success$fig3 <- run_script(
-  "03_dimension_loadings.R",
-  "Figure 3: FA loadings by dimension"
+  "figure2_dimensions_heatmap.R",
+  "Figure 2: Team offensive profiles (heatmap)"
 )
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -129,14 +129,14 @@ cat("╔════════════════════════
 cat("║  PART 5: FIGURES - CLUSTERING                                   ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
-success$fig4 <- run_script(
-  "04_dendrogram_k.R",
-  "Figure 4: Dendrogram k-selection (k=3-7)"
+success$fig3 <- run_script(
+  "figure3_dendrogram_k.R",
+  "Figure 3: Dendrogram k-selection (k=3-7)"
 )
 
-success$fig5 <- run_script(
-  "04_dendrogram_heatmap.R",
-  "Figure 5: Dendrogram + heatmap (k=6)"
+success$fig4 <- run_script(
+  "figure4_dendrogram_heatmap.R",
+  "Figure 4: Dendrogram + heatmap (k=6)"
 )
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -148,14 +148,9 @@ cat("╔════════════════════════
 cat("║  PART 6: FIGURES - CLUSTER PROFILES                             ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
-success$fig6 <- run_script(
-  "06_cluster_profiles_bars.R",
-  "Figure 6: Cluster profiles (bar chart)"
-)
-
-success$fig7 <- run_script(
-  "06_teams_by_cluster.R",
-  "Figure 7: Team profiles by cluster"
+success$fig5 <- run_script(
+  "figure5_teams_by_cluster.R",
+  "Figure 5: Team profiles by cluster"
 )
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -167,29 +162,18 @@ cat("╔════════════════════════
 cat("║  PART 7: FIGURES - PERFORMANCE ANALYSIS                         ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
-success$fig8 <- run_script(
-  "06_goals_strip.R",
-  "Figure 8: Goals/60 by cluster (LEAD VISUAL) ★"
+success$fig6 <- run_script(
+  "figure6_goals_strip.R",
+  "Figure 6: Goals/60 by cluster (LEAD VISUAL) ★"
 )
 
-success$fig9 <- run_script(
-  "06_regression_effects.R",
-  "Figure 9: Bootstrap regression effects"
-)
-
-success$fig10 <- run_script(
-  "10_finishing_vs_goals.R",
-  "Figure 10: Finishing vs Goals/60"
-)
-
-# Appendix
-success$app1 <- run_script(
-  "appendix_goals_vs_xg.R",
-  "Appendix: Goals vs xG scatter"
+success$fig7 <- run_script(
+  "figure7_regression_effects.R",
+  "Figure 7: Bootstrap regression effects"
 )
 
 # ═══════════════════════════════════════════════════════════════════════
-# PART 8: FIGURES - HISTORICAL ANALYSIS
+# PART 8: FIGURES - HISTORICAL EVOLUTION
 # ═══════════════════════════════════════════════════════════════════════
 
 cat("\n")
@@ -197,14 +181,14 @@ cat("╔════════════════════════
 cat("║  PART 8: FIGURES - HISTORICAL EVOLUTION                         ║\n")
 cat("╚════════════════════════════════════════════════════════════════╝\n")
 
-success$fig11 <- run_script(
-  "10_cluster_evolution.R",
-  "Figure 11: Cluster evolution 2020-2026"
+success$fig8 <- run_script(
+  "figure8_cluster_evolution.R",
+  "Figure 8: Cluster evolution 2020-2026"
 )
 
-success$fig12 <- run_script(
-  "10_team_trajectories.R",
-  "Figure 12: Team trajectories heatmap"
+success$fig9 <- run_script(
+  "figure9_team_trajectories.R",
+  "Figure 9: Team trajectories heatmap"
 )
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -236,7 +220,7 @@ if (n_success < n_total) {
 }
 
 # List generated figures
-figures <- list.files("outputs/figures", pattern = "\\.png$", full.names = FALSE)
+figures <- list.files("outputs/figures", pattern = "^figure.*\\.png$", full.names = FALSE)
 figures <- sort(figures)
 
 cat("Generated figures:\n")

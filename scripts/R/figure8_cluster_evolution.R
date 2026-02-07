@@ -29,7 +29,7 @@ df_clean <- read_csv("data/cleaned/all_seasons_clean.csv", show_col_types = FALS
 # Join cluster assignments with performance metrics
 df <- df %>%
   left_join(
-    df_clean %>% select(team, season_year, output_goals_per60, input_xGoals_per60, output_goals_pct),
+    df_clean %>% dplyr::select(team, season_year, output_goals_per60, input_xGoals_per60, output_goals_pct),
     by = c("team", "season_year")
   )
 
@@ -177,7 +177,7 @@ summary_table <- df %>%
     cluster = as.integer(as.character(cluster))
   ) %>%
   arrange(season_year, cluster) %>%
-  select(season_year, cluster, cluster_name, everything())
+  dplyr::select(season_year, cluster, cluster_name, everything())
 
 print(summary_table %>% mutate(across(where(is.numeric), ~round(., 2))))
 

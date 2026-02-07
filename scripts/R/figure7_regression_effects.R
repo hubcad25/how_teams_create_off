@@ -27,7 +27,7 @@ score_cols <- c("Volume", "Qualite", "Penetration", "Rebonds",
 
 # Join data
 df_output <- df_teams %>%
-  left_join(df_metrics %>% select(team, output_goals_per60, input_xGoals_per60), by = "team")
+  left_join(df_metrics %>% dplyr::select(team, output_goals_per60, input_xGoals_per60), by = "team")
 
 # GENERATE SIMULATED DATA (bootstrap)
 set.seed(42)

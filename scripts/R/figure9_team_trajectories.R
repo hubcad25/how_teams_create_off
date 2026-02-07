@@ -43,7 +43,7 @@ cluster_colors <- c(
 
 # PREPARE DATA FOR HEATMAP
 heatmap_data <- df %>%
-  select(team, season_year, cluster) %>%
+  dplyr::select(team, season_year, cluster) %>%
   mutate(
     cluster = factor(cluster),
     cluster_num = as.integer(as.character(cluster)),
@@ -55,7 +55,7 @@ heatmap_data <- df %>%
 teams_2025 <- df %>%
   filter(season_year == "2025-2026") %>%
   mutate(cluster_num = as.integer(as.character(cluster))) %>%
-  select(team, cluster_num) %>%
+  dplyr::select(team, cluster_num) %>%
   arrange(cluster_num, team)
 
 # Order teams by their 2025-26 cluster
@@ -125,12 +125,12 @@ cat("Teams that changed cluster:", sum(!stability_summary$stable), "\n\n")
 stable_teams <- stability_summary %>%
   filter(stable) %>%
   left_join(
-    df %>% filter(season_year == "2025-2026") %>% select(team, cluster),
+    df %>% filter(season_year == "2025-2026") %>% dplyr::select(team, cluster),
     by = "team"
   ) %>%
   mutate(cluster_name = cluster_names_map[as.character(cluster)]) %>%
   arrange(cluster) %>%
-  select(team, cluster_name)
+  dplyr::select(team, cluster_name)
 
 if (nrow(stable_teams) > 0) {
   cat("Teams that never changed cluster:\n")
