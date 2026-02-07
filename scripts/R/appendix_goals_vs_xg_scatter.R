@@ -17,7 +17,7 @@ cluster_colors <- c("#e74c3c", "#3498db", "#27ae60", "#9b59b6",
 
 # Join data
 df_output <- df_teams %>%
-  left_join(df_metrics %>% select(team, output_goals_per60, input_xGoals_per60), by = "team")
+  left_join(df_metrics %>% dplyr::select(team, output_goals_per60, input_xGoals_per60), by = "team")
 
 # CREATE PLOT
 cat("Creating goals vs xG scatter plot...\n")

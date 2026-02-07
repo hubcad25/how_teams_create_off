@@ -12,7 +12,7 @@ df_metrics <- read_csv("data/processed/team_metrics_latest.csv", show_col_types 
 
 # Prepare data
 all_data <- df_teams %>%
-  select(team, name, cluster, Finishing) %>%
+  dplyr::select(team, name, cluster, Finishing) %>%
   left_join(df_metrics, by = "team")
 
 # Cluster names and order

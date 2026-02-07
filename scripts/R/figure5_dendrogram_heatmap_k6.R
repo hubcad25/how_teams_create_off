@@ -54,19 +54,21 @@ p_dendro <- ggplot() +
   )
 
 # CREATE HEATMAP (ordered by dendrogram)
+# First rename French columns to English
 dim_long <- df_dim %>%
-  mutate(
-    Volume = dim_english["Volume"],
-    Qualite = dim_english["Qualite"],
-    Penetration = dim_english["Penetration"],
-    Rebonds = dim_english["Rebonds"],
-    RecoveryPossession = dim_english["RecoveryPossession"],
-    PuckExchanges = dim_english["PuckExchanges"]
+  rename(
+    Quality = Qualite,
+    Rebounds = Rebonds,
+    `RecoveryPossession` = RecoveryPossession,
+    `PuckExchanges` = PuckExchanges
   ) %>%
-  pivot_longer(cols = all_of(names(dim_english)), names_to = "dimension", values_to = "score") %>%
+  pivot_longer(cols = c(Volume, Quality, Penetration, Rebounds,
+                       Finishing, RecoveryPossession, PuckExchanges),
+               names_to = "dimension", values_to = "score") %>%
   mutate(
     team = factor(team, levels = team_order),
-    dimension = factor(dimension, levels = dim_english)
+    dimension = factor(dimension, levels = c("Volume", "Quality", "Penetration", "Rebounds",
+                                             "Finishing", "RecoveryPossession", "PuckExchanges"))
   )
 
 # Symmetric limits based on max absolute value
@@ -94,6 +96,13 @@ p_heat <- ggplot(dim_long, aes(x = as.numeric(team), y = dimension, fill = score
     expand = expansion(add = 0.5)
   ) +
   labs(x = NULL, y = NULL) +
+  scale_y_discrete(labels = c("Volume" = "Volume",
+                              "Quality" = "Quality",
+                              "Penetration" = "Penetration",
+                              "Rebounds" = "Rebounds",
+                              "Finishing" = "Finishing",
+                              "RecoveryPossession" = "Recovery+Possession",
+                              "PuckExchanges" = "Puck exchanges")) +
   theme_clean_light() +
   theme(
     axis.text.x = element_text(angle = 0, hjust = 0.5, size = 7),

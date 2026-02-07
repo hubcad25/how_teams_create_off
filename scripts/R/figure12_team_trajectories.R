@@ -43,7 +43,7 @@ cluster_colors <- c(
 
 # PREPARE DATA FOR HEATMAP
 heatmap_data <- df %>%
-  select(team, season_year, cluster) %>%
+  dplyr::select(team, season_year, cluster) %>%
   mutate(
     cluster = factor(cluster),
     cluster_num = as.integer(as.character(cluster)),
@@ -55,7 +55,7 @@ heatmap_data <- df %>%
 teams_2025 <- df %>%
   filter(season_year == "2025-2026") %>%
   mutate(cluster_num = as.integer(as.character(cluster))) %>%
-  select(team, cluster_num) %>%
+  dplyr::select(team, cluster_num) %>%
   arrange(cluster_num, team)
 
 # Order teams by their 2025-26 cluster

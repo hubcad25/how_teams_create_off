@@ -3,7 +3,6 @@
 
 library(tidyverse)
 library(clessnize)
-library(MASS)
 
 cat("Bootstrap regression: dimension effects on GF/60\n\n")
 
@@ -27,7 +26,7 @@ score_cols <- c("Volume", "Qualite", "Penetration", "Rebonds",
 
 # Join data
 df_output <- df_teams %>%
-  left_join(df_metrics %>% select(team, output_goals_per60, input_xGoals_per60), by = "team")
+  left_join(df_metrics %>% dplyr::select(team, output_goals_per60, input_xGoals_per60), by = "team")
 
 # GENERATE SIMULATED DATA (bootstrap)
 set.seed(42)
@@ -51,7 +50,7 @@ df_sim <- map_dfr(levels(df_output$cluster), function(cl) {
   lam <- case_when(n_obs <= 3 ~ 0.7, n_obs <= 5 ~ 0.5, TRUE ~ 0.3)
   Sigma <- shrink_cov(sub, lambda = lam)
 
-  synth <- mvrnorm(n = N_SIM, mu = mu, Sigma = Sigma)
+  synth <- MASS::mvrnorm(n = N_SIM, mu = mu, Sigma = Sigma)
   as_tibble(synth) %>% mutate(cluster = cl)
 })
 
