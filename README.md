@@ -1,6 +1,6 @@
 # How NHL Teams Create Offense at 5v5 (2025-26)
 
-> **Question**: How do the best NHL teams generate offense at 5v5? Traditional stats (GF, xG) tell us **if** a team produces, but not **how**. This analysis identifies 6 distinct offensive archetypes and reveals which stylistic choices actually predict success.
+> Question: How do NHL teams generate offense at 5v5? Traditional stats (GF, xG) tell us **if** a team produces goals or quality chances, but not **how**. This analysis identifies 6 distinct offensive archetypes and reveals which stylistic choices actually predict success.
 
 ---
 

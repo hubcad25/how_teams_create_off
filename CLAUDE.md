@@ -48,6 +48,7 @@ Ces variables décrivent COMMENT les équipes jouent:
 - K-means sur les scores FA
 - Sélection du k par silhouette score
 
+
 ### 4. Variables d'output (résultats)
 
 Variables mesurant le SUCCÈS offensif: GF%, xGF%, Sh%, goals above expected, conversion par niveau de danger.
