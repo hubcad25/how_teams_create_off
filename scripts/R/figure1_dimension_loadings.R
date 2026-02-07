@@ -2,6 +2,7 @@
 # Shows how each variable contributes to its dimension
 
 library(tidyverse)
+library(ggh4x)
 source("scripts/R/00_functions.R")
 
 # Read data
@@ -30,15 +31,46 @@ loadings <- loadings %>%
                                   "Puck exchanges"))
   )
 
+# Pad panels so every panel in the same row has equal bar count
+dim_levels <- levels(loadings$dimension)
+n_per_row <- ceiling(length(dim_levels) / 2)
+vars_count <- loadings %>% count(dimension, .drop = FALSE) %>% arrange(dimension)
+
+row_max <- c(
+  max(vars_count$n[1:n_per_row]),
+  max(vars_count$n[(n_per_row + 1):nrow(vars_count)])
+)
+row_heights <- row_max
+
+padding <- map_dfr(seq_len(nrow(vars_count)), function(i) {
+  row_idx <- if (i <= n_per_row) 1 else 2
+  n_pad <- row_max[row_idx] - vars_count$n[i]
+  if (n_pad > 0) {
+    tibble(
+      variable = paste0(".pad_", vars_count$dimension[i], "_", seq_len(n_pad)),
+      loading = 0,
+      label = paste0(".pad_", vars_count$dimension[i], "_", seq_len(n_pad)),
+      dimension = vars_count$dimension[i]
+    )
+  }
+})
+
+loadings <- bind_rows(loadings, padding) %>%
+  mutate(is_pad = startsWith(label, ".pad")) %>%
+  arrange(dimension, desc(is_pad), loading) %>%
+  mutate(label = factor(label, levels = unique(label))) %>%
+  select(-is_pad)
+
 # CREATE PLOT
 cat("Creating loadings plot...\n")
 
-p_loadings <- ggplot(loadings, aes(x = reorder(label, loading), y = loading,
-                                    fill = loading > 0)) +
-  geom_col(show.legend = FALSE, width = 0.7) +
+p_loadings <- ggplot(loadings, aes(x = label, y = loading, fill = loading > 0)) +
+  geom_col(show.legend = FALSE, width = 0.5) +
   geom_hline(yintercept = 0, linewidth = 0.3) +
-  facet_wrap(~dimension, scales = "free_y", ncol = 2) +
+  facet_wrap(~ dimension, scales = "free_y", nrow = 2) +
+  force_panelsizes(rows = row_heights) +
   scale_fill_manual(values = c("TRUE" = "#c0392b", "FALSE" = "#2980b9")) +
+  scale_x_discrete(labels = function(x) ifelse(startsWith(x, ".pad"), "", x)) +
   coord_flip() +
   labs(
     title = "Factor Analysis Loadings by Dimension",
@@ -50,13 +82,14 @@ p_loadings <- ggplot(loadings, aes(x = reorder(label, loading), y = loading,
   theme(
     plot.title = element_text(face = "bold", size = 14),
     plot.subtitle = element_text(size = 10, color = "grey40"),
-    strip.text = element_text(face = "bold", size = 12),
-    axis.text.y = element_text(size = 9)
+    #strip.text = element_text(size = 12),
+    axis.text.y = element_text(size = 9),
+    axis.text.x = element_text(size = 9)
   )
 
 # Save
 ggsave("outputs/figures/figure1_dimension_loadings.png", p_loadings,
-       width = 13, height = 12, dpi = 150)
+       width = 10, height = 6, dpi = 150)
 
 cat("Saved: outputs/figures/figure1_dimension_loadings.png\n")
 print(p_loadings)

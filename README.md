@@ -40,17 +40,20 @@ We then apply hierarchical clustering (Ward D2) on these dimension scores. Based
 | Penetration | Getting shots through | 1.67 | 55.7% | 0.68 |
 | Rebounds | Second chance creation | 1.45 | 48.2% | 0.54 |
 | Finishing | Converting vs expected | 3.1 | 62% | 0.86 |
-| Recovery+Possession | Puck recovery, maintaining pressure | 1.75 | 21.9% | 0.52 |
-| Puck Exchanges | Pace, turnover frequency | 1.62 | 20.2% | 0.52 |
+| Recovery+Possession | Lots of takeaways, no giveaways, maintaining pressure | 1.75 | 21.9% | 0.52 |
+| Puck Exchanges | Takeaways + giveaways | 1.62 | 20.2% | 0.52 |
 
-*The Miscellaneous dimension tested better with 2 factors (42.2% vs 21.0% variance explained), so we split it into Recovery+Possession (21.9%) and Puck Exchanges (20.2%).
+The Miscellaneous dimension tested better with 2 factors (42.2% vs 21.0% variance explained), so we split it into Recovery+Possession (21.9%) and Puck Exchanges (20.2%).
 
 
 ![Dimension loadings](outputs/figures/figure1_dimension_loadings.png)
 
 The Misc dimension splits into 2 factors:
-- **Recovery+Possession**: Takeaways, limiting giveaways, maintaining zone pressure
-- **Puck Exchanges**: High pace, frequent turnovers (high giveaways+takeaways, low hits/penalties)
+- Recovery+Possession: lots of takeaways, no giveaways, maintaining pressure
+- Puck Exchanges: frequent turnovers (high giveaways+takeaways, low hits/penalties)
+
+Using these loadings as weights, we compute a composite score for each team on every dimension.
+Here is how each NHL team profiles across these 7 dimensions in 2025-2026:
 
 ![Team offensive profiles](outputs/figures/figure2_dimensions_heatmap.png)
 
