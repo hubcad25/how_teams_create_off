@@ -71,6 +71,60 @@ dir.create("outputs/tables", showWarnings = FALSE, recursive = TRUE)
 saveRDS(hc, "data/processed/hclust_ward.rds")
 write_csv(sil_results, "outputs/tables/hclust_silhouette_by_k.csv")
 
-cat("Files saved:\n")
+# CLUSTER COMPARISON STATS (k=6)
+cat("\nCLUSTER COMPARISON STATS (k=6)\n\n")
+
+clusters_k6 <- cutree(hc, k = 6)
+sil_k6 <- silhouette(clusters_k6, d)
+
+cluster_stats <- df_dim %>%
+  mutate(cluster = clusters_k6) %>%
+  pivot_longer(cols = all_of(score_cols), names_to = "dimension", values_to = "score") %>%
+  group_by(cluster, dimension) %>%
+  summarise(
+    n = n(),
+    mean = mean(score),
+    sd = sd(score),
+    .groups = "drop"
+  )
+
+# Per-team silhouette
+team_sil <- tibble(
+  team = df_dim$team,
+  cluster = clusters_k6,
+  silhouette = sil_k6[, 3]
+)
+
+# Cluster-level silhouette
+cluster_sil <- team_sil %>%
+  group_by(cluster) %>%
+  summarise(mean_silhouette = mean(silhouette), .groups = "drop")
+
+# Pairwise Cohen's d between all cluster pairs
+cluster_pairs <- combn(sort(unique(clusters_k6)), 2, simplify = FALSE)
+
+pairwise_d <- map_dfr(cluster_pairs, function(pair) {
+  map_dfr(score_cols, function(dim) {
+    vals1 <- df_dim[[dim]][clusters_k6 == pair[1]]
+    vals2 <- df_dim[[dim]][clusters_k6 == pair[2]]
+    pooled_sd <- sqrt((var(vals1) + var(vals2)) / 2)
+    d_val <- (mean(vals1) - mean(vals2)) / pooled_sd
+    tibble(cluster_a = pair[1], cluster_b = pair[2],
+           dimension = dim, cohens_d = d_val)
+  })
+})
+
+write_csv(cluster_stats, "outputs/tables/cluster_dimension_stats.csv")
+write_csv(team_sil, "outputs/tables/cluster_team_silhouettes.csv")
+write_csv(cluster_sil, "outputs/tables/cluster_silhouettes.csv")
+write_csv(pairwise_d, "outputs/tables/cluster_pairwise_cohens_d.csv")
+
+cat("Cluster stats saved:\n")
+cat("  outputs/tables/cluster_dimension_stats.csv\n")
+cat("  outputs/tables/cluster_team_silhouettes.csv\n")
+cat("  outputs/tables/cluster_silhouettes.csv\n")
+cat("  outputs/tables/cluster_pairwise_cohens_d.csv\n")
+
+cat("\nFiles saved:\n")
 cat("  data/processed/hclust_ward.rds\n")
 cat("  outputs/tables/hclust_silhouette_by_k.csv\n")

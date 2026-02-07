@@ -59,15 +59,17 @@ A few scores stand out already.
 
 ## Creating Offensive Archetypes
 
-
+With 7 dimension scores per team, we can group teams that play similarly. We use Ward's D2 hierarchical clustering on the raw z-scores: it minimizes within-cluster variance at each merge, producing compact groups, and the dendrogram lets us inspect how teams relate before choosing k.
 
 ### How Many Archetypes?
 
-Silhouette analysis suggests **k=6** balances cluster cohesion with interpretability.
+We select k using a combination of standard Ward D2 metrics (merge height, within-cluster SS, silhouette) and cluster interpretability.
 
-![Dendrogram k-selection](outputs/figures/figure3_dendrogram_k.png)
+![Cluster selection metrics](outputs/figures/figure3_k_selection.png)
 
-The dendrogram with k=6 reveals natural groupings:
+No single k dominates across all three metrics. k=5 has the highest silhouette (0.221), but it leaves 18 of 32 teams in one cluster (see [Appendix](#appendix)). k=6 splits that group into sub-groups of 6 and 12 that differ meaningfully on Finishing and Rebounds. k=7 only isolates Carolina from its group, adding little insight. We go with k=6.
+
+Below, the dendrogram for k=6 paired with a heatmap of dimension scores (same ordering) to help interpret what separates each cluster.
 
 ![Dendrogram heatmap k=6](outputs/figures/figure4_dendrogram_heatmap.png)
 
@@ -160,6 +162,8 @@ Questions to explore:
 **Outputs:** `outputs/figures/` and `outputs/tables/`
 
 ## Appendix
+
+![Dendrogram k-selection](outputs/figures/appendix_dendrograms_by_k.png)
 
 - [Full code in `scripts/`](scripts/)
 - [Cluster assignments: `teams_with_scores.csv`](outputs/tables/teams_with_scores.csv)

@@ -78,8 +78,8 @@ dendro_plots <- map(3:7, function(k) {
 p_all_k <- wrap_plots(dendro_plots, ncol = 1)
 
 # Save
-ggsave("outputs/figures/figure3_dendrogram_k.png", p_all_k,
+ggsave("outputs/figures/appendix_dendrograms_by_k.png", p_all_k,
        width = 14, height = 18, dpi = 150)
 
-cat("Saved: outputs/figures/figure3_dendrogram_k.png\n")
+cat("Saved: outputs/figures/appendix_dendrograms_by_k.png\n")
 print(p_all_k)
