@@ -48,6 +48,14 @@ dimensions <- list(
     "input_pct_xG_from_rebounds"
   ),
 
+  Finishing = c(
+    "output_shooting_pct_vs_expected",
+    "output_goals_above_expected",
+    "output_HD_goals_vs_xG",
+    "output_MD_goals_vs_xG",
+    "output_LD_goals_vs_xG"
+  ),
+
   Misc = c(
     "input_takeaways_per60",
     "input_giveaways_per60",
@@ -58,6 +66,17 @@ dimensions <- list(
     "input_hits_per60",
     "input_zone_exit_success"
   )
+)
+
+# Dimension names for output (English)
+dim_names <- c(
+  "Volume" = "Volume",
+  "Qualite" = "Quality",
+  "Penetration" = "Penetration",
+  "Rebonds" = "Rebounds",
+  "Finishing" = "Finishing",
+  "Misc_1" = "Recovery+Possession",
+  "Misc_2" = "Puck exchanges"
 )
 
 # 3. FONCTION FA À 1 FACTEUR ----
@@ -99,7 +118,7 @@ print_loadings <- function(loadings, metric_labels, dim_name, var_pct) {
       for (i in 1:min(5, length(sorted))) {
         var <- names(sorted)[i]
         label <- metric_labels[var]
-        if (is.na(label)) label <- gsub("input_", "", var)
+        if (is.na(label)) label <- gsub("^(input|output)_", "", var)
         sign <- ifelse(sorted[i] > 0, "+", "-")
         cat(sprintf("    %s%.2f %s\n", sign, abs(sorted[i]), label))
       }
@@ -109,7 +128,7 @@ print_loadings <- function(loadings, metric_labels, dim_name, var_pct) {
     for (i in seq_along(sorted)) {
       var <- names(sorted)[i]
       label <- metric_labels[var]
-      if (is.na(label)) label <- gsub("input_", "", var)
+      if (is.na(label)) label <- gsub("^(input|output)_", "", var)
       sign <- ifelse(sorted[i] > 0, "+", "-")
       cat(sprintf("  %s%.2f %s\n", sign, abs(sorted[i]), label))
     }
@@ -141,8 +160,8 @@ for (dim_name in names(dimensions)) {
       cat("  -> 2 facteurs\n\n")
       results[[dim_name]] <- fa2
       print_loadings(fa2$loadings, metric_labels, dim_name, fa2$var_explained)
-      score_list[["Misc_1"]] <- fa2$scores[, 1]
-      score_list[["Misc_2"]] <- fa2$scores[, 2]
+      score_list[["RecoveryPossession"]] <- fa2$scores[, 1]
+      score_list[["PuckExchanges"]] <- fa2$scores[, 2]
     } else {
       cat("  -> 1 facteur (gain insuffisant)\n\n")
       results[[dim_name]] <- fa1
@@ -158,14 +177,21 @@ for (dim_name in names(dimensions)) {
   }
 }
 
-# 5. CRÉER DATAFRAME DES SCORES (standardisés) ----
+# 5. CRÉER DATAFRAME DES SCORES (standardisés + accentués) ----
+
+# Transformation en puissance pour accentuer les extrêmes
+# sign(x) * |x|^p avec p > 1
+POWER <- 1.15
+
+accentuate <- function(x) sign(x) * abs(x)^POWER
 
 score_df <- as_tibble(score_list) %>%
-  mutate(across(everything(), ~as.numeric(scale(.))))
+  mutate(across(everything(), ~accentuate(as.numeric(scale(.)))))
 
 df_dimensions <- df %>%
   select(team, name) %>%
   bind_cols(score_df)
+# Misc_1 and Misc_2 are already renamed as RecoveryPossession and PuckExchanges
 
 cat("SCORES PAR ÉQUIPE (aperçu)\n\n")
 
