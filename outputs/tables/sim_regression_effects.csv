@@ -1,0 +1,50 @@
+cluster,dimension,effect,cluster_label
+Base (no interaction),Volume,0.06309617015467354,Base (no interaction)
+Base (no interaction),Qualite,0.0012117012129630805,Base (no interaction)
+Base (no interaction),Penetration,0.06107391435143264,Base (no interaction)
+Base (no interaction),Rebonds,0.12165851334084977,Base (no interaction)
+Base (no interaction),Finishing,0.07166095010149931,Base (no interaction)
+Base (no interaction),RecoveryPossession,0.021563296294218656,Base (no interaction)
+Base (no interaction),PuckExchanges,-0.00794209976062213,Base (no interaction)
+1,Volume,0.13456837882351985,Crash & Hope
+1,Qualite,-0.02161012422847921,Crash & Hope
+1,Penetration,0.06792387386367045,Crash & Hope
+1,Rebonds,0.08161381393744796,Crash & Hope
+1,Finishing,0.2141596008597829,Crash & Hope
+1,RecoveryPossession,0.05226185081869795,Crash & Hope
+1,PuckExchanges,0.0027569217694857666,Crash & Hope
+2,Volume,0.05257553752609623,High-Octane Drive
+2,Qualite,-0.1661138682299459,High-Octane Drive
+2,Penetration,0.09992857640480297,High-Octane Drive
+2,Rebonds,0.36567218836647875,High-Octane Drive
+2,Finishing,0.05713389001485536,High-Octane Drive
+2,RecoveryPossession,0.03853177533475995,High-Octane Drive
+2,PuckExchanges,0.005924983219465052,High-Octane Drive
+3,Volume,0.03825083789341169,Streaky Offense
+3,Qualite,-0.11544715149804491,Streaky Offense
+3,Penetration,0.12465457791970193,Streaky Offense
+3,Rebonds,0.03560295840280707,Streaky Offense
+3,Finishing,0.25340180154711617,Streaky Offense
+3,RecoveryPossession,-0.01914924092389269,Streaky Offense
+3,PuckExchanges,0.010980602607693048,Streaky Offense
+4,Volume,0.03285301129414389,Selective Shooting
+4,Qualite,0.02058391652186213,Selective Shooting
+4,Penetration,0.014208068607525007,Selective Shooting
+4,Rebonds,0.1158471646970396,Selective Shooting
+4,Finishing,0.021330306198008575,Selective Shooting
+4,RecoveryPossession,-0.07971340057571474,Selective Shooting
+4,PuckExchanges,0.08733589355270235,Selective Shooting
+5,Volume,-0.010370224823748053,Lane Creation
+5,Qualite,0.010467376669189135,Lane Creation
+5,Penetration,0.04697762077671683,Lane Creation
+5,Rebonds,0.16399022160134596,Lane Creation
+5,Finishing,-0.033768975891961456,Lane Creation
+5,RecoveryPossession,-0.02870460985482199,Lane Creation
+5,PuckExchanges,0.12976148715915167,Lane Creation
+6,Volume,0.018871324512244214,Puck Hog & Finish
+6,Qualite,0.017525439647586995,Puck Hog & Finish
+6,Penetration,0.0958061671236354,Puck Hog & Finish
+6,Rebonds,0.007360264290956639,Puck Hog & Finish
+6,Finishing,-0.03578879116725911,Puck Hog & Finish
+6,RecoveryPossession,-0.03221908072116348,Puck Hog & Finish
+6,PuckExchanges,0.009048740520346472,Puck Hog & Finish

@@ -22,11 +22,7 @@ pip-delete-this-directory.txt
 data/raw/*.csv
 data/processed/*.csv
 
-# Outputs
-outputs/figures/*.png
-outputs/figures/*.pdf
-outputs/figures/*.svg
-outputs/tables/*.csv
+# Outputs (only exclude temp/large files)
 outputs/tables/*.xlsx
 
 # IDE
