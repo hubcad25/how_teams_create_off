@@ -6,7 +6,7 @@
 
 Traditional offensive stats (GF, xG) measure *results*, not *process*. Two teams can have identical xG/60 but create it in completely different ways.
 
-Instead of asking "how much?", we ask "how?". We decompose offensive style into 7 intuition-based independent dimensions, then identify 6 distinct offensive archetypes across the NHL.
+Instead of asking "how much?", we ask "how?". We decompose offensive style into 6 process dimensions that describe *how* teams create chances, then identify 5 distinct offensive archetypes across the NHL.
 
 ![Goals per 60 by cluster](outputs/figures/figure6_goals_strip.png)
 
@@ -14,7 +14,7 @@ Instead of asking "how much?", we ask "how?". We decompose offensive style into 
 
 Data: MoneyPuck 5v5 statistics, 2025-26 season (32 teams)
 
-Variables: 30+ input variables measuring *how* teams play:
+Variables organized by dimension: 30+ input variables measuring *how* teams play:
 - Shot volume (Corsi, Fenwick, SOG, xG per 60)
 - Shot quality (xG/shot, danger ratios HD/MD/LD)
 - Penetration (completion rate, blocked/missed)
@@ -23,21 +23,32 @@ Variables: 30+ input variables measuring *how* teams play:
 
 We run a confirmatory factor analysis on each dimension (1 factor per dimension, except Miscellaneous where we force 2 factors). From the factor loadings, we compute dimension scores for each team.
 
-We then apply hierarchical clustering (Ward D2) on these dimension scores. Based on cluster interpretability, we select k=6 archetypes.
+A 7th dimension, *Finishing*, is computed the same way but treated separately: it measures conversion efficiency rather than style, so it's excluded from clustering and used later to assess which archetypes benefit most from strong finishing.
+
+We then apply hierarchical clustering (Ward D2) on the 6 style dimension scores (excluding Finishing). Based on cluster interpretability, we select k=5 archetypes.
 
 ## Dimensions
+
+Style dimensions (used for clustering):
 
 | Dimension | What It Measures | Eigenvalue | Variance Explained | Cronbach's α |
 |-----------|------------------|------------|-------------------|--------------|
 | Volume | Shot quantity, pressure | 5.32 | 88.6% | 0.98 |
-| Quality | Shot selection | 4.19 | 52.4% | 0.87 |
+| Quality | Shot selection (as a ratio) | 4.19 | 52.4% | 0.87 |
 | Penetration | Getting shots through | 1.67 | 55.7% | 0.68 |
 | Rebounds | Second chance creation | 1.45 | 48.2% | 0.54 |
-| Finishing | Converting vs expected | 3.1 | 62% | 0.86 |
-| Recovery+Possession | Lots of takeaways, no giveaways, maintaining pressure | 1.75 | 21.9% | 0.52 |
+| Recovery+Possession | Lots of takeaways, no giveaways, maintain pressure | 1.75 | 21.9% | 0.52 |
 | Puck Exchanges | Takeaways + giveaways | 1.62 | 20.2% | 0.52 |
 
-The Miscellaneous dimension tested better with 2 factors (42.2% vs 21.0% variance explained), so we split it into Recovery+Possession (21.9%) and Puck Exchanges (20.2%).
+> The Miscellaneous dimension tested better with 2 factors (42.2% vs 21.0% variance explained), so we split it into Recovery+Possession (21.9%) and Puck Exchanges (20.2%).
+
+Intermediate dimension (computed the same way, excluded from clustering):
+
+| Dimension | What It Measures | Eigenvalue | Variance Explained | Cronbach's α |
+|-----------|------------------|------------|-------------------|--------------|
+| Finishing | Converting vs expected (Sh% vs xSh%, goals above expected) | 3.1 | 62% | 0.86 |
+
+> Finishing is a composite score derived from 5 conversion metrics (shooting percentage vs expected, goals above expected, conversion by danger level). Like the style dimensions, it's computed via single-factor analysis and expressed as a z-score. But it captures *how well* a team converts its chances, not *how* it creates them. Including it in clustering would mix outcomes with style, so we keep it separate and bring it back in subsequent analyses to test which archetypes benefit most from strong finishing.
 
 
 ![Dimension loadings](outputs/figures/figure1_dimension_loadings.png)
@@ -59,27 +70,26 @@ A few scores stand out already.
 
 ## Creating Offensive Archetypes
 
-With 7 dimension scores per team, we can group teams that play similarly. We use Ward's D2 hierarchical clustering on the raw z-scores: it minimizes within-cluster variance at each merge, producing compact groups, and the dendrogram lets us inspect how teams relate before choosing k.
+With 6 dimension scores per team, we can now group teams that play similarly. We use Ward's D2 hierarchical clustering on the raw z-scores: it minimizes within-cluster variance at each merge, producing compact groups, and the dendrogram lets us inspect how teams relate before choosing k.
 
 ### How Many Archetypes?
 
-We select k using a combination of standard Ward D2 metrics (merge height, within-cluster SS, silhouette) and cluster interpretability.
+We select k using a combination of standard Ward D2 metrics (merge height, within-cluster SS, silhouette), but mostly cluster interpretability.
 
 ![Cluster selection metrics](outputs/figures/figure3_k_selection.png)
 
-No single k dominates across all three metrics. k=5 has the highest silhouette (0.221), but it leaves 18 of 32 teams in one cluster (see [Appendix](#appendix)). k=6 splits that group into sub-groups of 6 and 12 that differ meaningfully on Finishing and Rebounds. k=7 only isolates Carolina from its group, adding little insight. We go with k=6.
+No single k dominates across all three metrics.
 
-Below, the dendrogram for k=6 paired with a heatmap of dimension scores (same ordering) to help interpret what separates each cluster.
+- k=4 has low silhouette (0.211) and produces clusters that are too broad.
+- k=5 creates a singleton (SJS) and keeps EDM-LAK merged with the NYR-TOR-DAL-PHI-SEA group.
+- k=6 has the highest silhouette (0.236), splits EDM-LAK into their own cluster, and keeps SJS as a singleton.
+- k=7 fragments further without adding insight (see [Appendix](#appendix) for dendrograms by k).
+
+We start with k=6. Below, the dendrogram paired with a heatmap of dimension scores (same team ordering).
 
 ![Dendrogram heatmap k=6](outputs/figures/figure4_dendrogram_heatmap.png)
 
-
-Interpretation:
-[Petit cluster, mais très clair: MTL et OTT. Les deux équipes se démarquent énormément sur l'aspect recovery possession, pas de puck exchanges. ]
-
-[Gros cluster average: 12 équipes, de CGY à WSH, sont près de la moyenne presque partout. leur Zscore vont de -1.5 à 1.3 au maximum. (ne pas parler du finishing tout de suite.). C'est un cluster]
-[Le cluster de MIN à CHI est celui qui se sépare du peloton quand on passe de k=5 à k=6. On peut voir que cluster se démarque un peu par +rebounds et -finishing, mais pas tant que ça.]
-
+> Refinement: the k=6 solution produces one singleton (SJS) and one team with negative silhouette (BOS, at -0.22, placed in the cluster with high *Recovery+Possession* scores despite being closer to the peloton on this dimension). We reassign both algorithmically: the negative-silhouette team moves to its nearest neighbor cluster, and the singleton merges into its closest cluster. This yields 5 final archetypes. The process is automatic and reproducible (see code in `04_analysis_cluster_assignments.R`).
 
 ### Interpreting and Naming Archetypes
 

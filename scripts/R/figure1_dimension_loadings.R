@@ -27,8 +27,8 @@ loadings <- loadings %>%
     ),
     dimension = factor(dimension,
                        levels = c("Volume", "Quality", "Penetration",
-                                  "Rebounds", "Finishing", "Recovery+Possession",
-                                  "Puck exchanges"))
+                                  "Rebounds", "Recovery+Possession",
+                                  "Puck exchanges", "Finishing"))
   )
 
 # Pad panels so every panel in the same row has equal bar count
@@ -61,15 +61,28 @@ loadings <- bind_rows(loadings, padding) %>%
   mutate(label = factor(label, levels = unique(label))) %>%
   select(-is_pad)
 
+# Add fill category: combine sign and Finishing flag
+loadings <- loadings %>%
+  mutate(
+    fill_cat = case_when(
+      dimension == "Finishing" & loading > 0 ~ "Finishing_pos",
+      dimension == "Finishing" & loading <= 0 ~ "Finishing_neg",
+      loading > 0 ~ "Other_pos",
+      loading <= 0 ~ "Other_neg"
+    ),
+    fill_cat = factor(fill_cat, levels = c("Other_pos", "Other_neg", "Finishing_pos", "Finishing_neg"))
+  )
+
 # CREATE PLOT
 cat("Creating loadings plot...\n")
 
-p_loadings <- ggplot(loadings, aes(x = label, y = loading, fill = loading > 0)) +
+p_loadings <- ggplot(loadings, aes(x = label, y = loading, fill = fill_cat)) +
   geom_col(show.legend = FALSE, width = 0.5) +
   geom_hline(yintercept = 0, linewidth = 0.3) +
   facet_wrap(~ dimension, scales = "free_y", nrow = 2) +
   force_panelsizes(rows = row_heights) +
-  scale_fill_manual(values = c("TRUE" = "#c0392b", "FALSE" = "#2980b9")) +
+  scale_fill_manual(values = c("Other_pos" = "#c0392b", "Other_neg" = "#2980b9",
+                                "Finishing_pos" = "#e67e22", "Finishing_neg" = "#f39c12")) +
   scale_x_discrete(labels = function(x) ifelse(startsWith(x, ".pad"), "", x)) +
   coord_flip() +
   labs(

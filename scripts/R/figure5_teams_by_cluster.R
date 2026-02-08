@@ -12,7 +12,7 @@ df_metrics <- read_csv("data/processed/team_metrics_latest.csv", show_col_types 
   select(team, output_goals_per60)
 
 score_cols <- c("Volume", "Qualite", "Penetration", "Rebonds",
-                "Finishing", "RecoveryPossession", "PuckExchanges")
+                "RecoveryPossession", "PuckExchanges")
 
 # Prepare data
 radar_data <- profiles %>%
@@ -124,7 +124,7 @@ create_profile_facet <- function(focal_cl) {
       panel.grid.major.x = element_blank(),
       panel.grid.major.y = element_line(color = "grey90", linewidth = 0.3),
       panel.border = element_blank(),
-      strip.text = element_text(size = 9, face = "bold"),
+      strip.text = element_text(size = 9, face = "plain"),
       plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
       plot.margin = margin(5, 5, 5, 5)
     ) +
@@ -137,9 +137,9 @@ create_profile_facet <- function(focal_cl) {
 all_labels <- levels(radar_data$label)
 all_plots <- map(all_labels, create_profile_facet)
 
-ncol <- 2
+nrow <- 2
 
-profile_combined <- wrap_plots(all_plots, ncol = ncol) +
+profile_combined <- wrap_plots(all_plots, nrow = nrow) +
   plot_annotation(
     title = "Team Offensive Profiles by Cluster",
     subtitle = "Focal cluster highlighted in color, others in gray | Clusters ordered by mean GF/60",
