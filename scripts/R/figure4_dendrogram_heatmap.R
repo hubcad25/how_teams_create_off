@@ -20,9 +20,9 @@ dim_english <- c(
   "Qualite" = "Quality",
   "Penetration" = "Penetration",
   "Rebonds" = "Rebounds",
-  "Finishing" = "Finishing",
   "RecoveryPossession" = "Recovery+\nPossession",
-  "PuckExchanges" = "Puck\nexchanges"
+  "PuckExchanges" = "Puck\nexchanges",
+  "Finishing" = "Finishing"
 )
 
 # Team order from dendrogram
@@ -79,7 +79,7 @@ dim_long <- df_dim %>%
     team = factor(team, levels = team_order),
     x_pos = as.numeric(team),
     dimension = dplyr::recode(dimension, !!!dim_english),
-    dimension = factor(dimension, levels = dim_english)
+    dimension = factor(dimension, levels = c("Volume", "Quality", "Penetration", "Rebounds", "Recovery+\nPossession", "Puck\nexchanges", "Finishing"))
   )
 
 p_heat <- ggplot(dim_long) +
@@ -120,6 +120,7 @@ p_heat <- ggplot(dim_long) +
     guide = "none"
   ) +
   geom_vline(xintercept = cluster_breaks, color = "grey30", linewidth = 0.6) +
+  geom_hline(yintercept = 1.5, color = "grey50", linewidth = 0.8) +
   geom_text(data = dim_long, aes(x = x_pos, y = dimension, label = sprintf("%.1f", score)), size = 2.3) +
   scale_x_continuous(
     limits = x_lim, expand = c(0, 0),
@@ -128,6 +129,7 @@ p_heat <- ggplot(dim_long) +
     position = "top",
     sec.axis = dup_axis()
   ) +
+  scale_y_discrete(limits = rev(c("Volume", "Quality", "Penetration", "Rebounds", "Recovery+\nPossession", "Puck\nexchanges", "Finishing"))) +
   labs(x = NULL, y = NULL) +
   theme_hockey() +
   theme(
