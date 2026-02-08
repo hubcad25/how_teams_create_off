@@ -103,7 +103,7 @@ We start with k=6. Below, the dendrogram paired with a heatmap of dimension scor
 | **4** | Lane Creation | Create quality shooting lanes | EDM, LAK |
 | **5** | Puck Hogging & Recovery | Aggressive puck control, keep possession | MIN, MTL, OTT, UTA |
 
-## [What Drives Success? trouver un titre clair pour cette section]
+## What Drives Production?
 
 **What actually drives offensive production?**
 
