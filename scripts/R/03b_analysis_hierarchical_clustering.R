@@ -9,7 +9,8 @@ cat("HIERARCHICAL CLUSTERING (WARD D2)\n\n")
 # Load dimension scores
 df_dim <- read_csv("data/processed/team_dimension_scores.csv", show_col_types = FALSE)
 
-score_cols <- setdiff(names(df_dim), c("team", "name"))
+all_dims <- setdiff(names(df_dim), c("team", "name"))
+score_cols <- setdiff(all_dims, "Finishing")  # Finishing excluded from clustering (intermediate var)
 scores <- df_dim %>% select(all_of(score_cols)) %>% as.matrix()
 rownames(scores) <- df_dim$team
 

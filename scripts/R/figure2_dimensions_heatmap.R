@@ -2,6 +2,7 @@
 # Shows each team's z-scores across 7 dimensions
 
 library(tidyverse)
+library(ggnewscale)
 source("scripts/R/00_functions.R")
 
 # Read data
@@ -22,7 +23,7 @@ data_long <- data %>%
                names_to = "dimension",
                values_to = "score")
 
-# English dimension names
+# English dimension names - Finishing LAST
 data_long <- data_long %>%
   mutate(
     dimension = case_when(
@@ -33,8 +34,8 @@ data_long <- data_long %>%
       TRUE ~ dimension
     ),
     dimension = factor(dimension, levels = c("Volume", "Quality", "Penetration",
-                                             "Rebounds", "Finishing",
-                                             "Recovery+Possession", "Puck exchanges"))
+                                             "Rebounds", "Recovery+Possession",
+                                             "Puck exchanges", "Finishing"))
   )
 
 # Summary: Find extreme teams per dimension
@@ -52,10 +53,15 @@ for (dim in dim_cols) {
 # CREATE HEATMAP
 cat("Creating heatmap...\n")
 
-p1 <- ggplot(data_long, aes(x = dimension, y = team, fill = score)) +
-  geom_tile(color = NA, linewidth = 0.5) +
-  geom_text(aes(label = sprintf("%.1f", score)),
-            size = 3, color = "black") +
+# Get dimension positions for the separator line
+dim_positions <- as.numeric(factor(levels(data_long$dimension), levels = levels(data_long$dimension)))
+separator_pos <- max(dim_positions) - 0.5  # line before Finishing
+
+p1 <- ggplot(data_long) +
+  # First layer: 6 clustering dimensions (red-blue palette)
+  geom_tile(data = filter(data_long, dimension != "Finishing"),
+            aes(x = dimension, y = team, fill = score),
+            color = NA) +
   scale_fill_gradientn(
     colors = c(
       colorRampPalette(c("#2980b9", "white"))(5),
@@ -69,6 +75,29 @@ p1 <- ggplot(data_long, aes(x = dimension, y = team, fill = score)) +
     },
     name = "Z-score"
   ) +
+  # New fill scale for Finishing
+  new_scale_fill() +
+  # Second layer: Finishing (purple-orange palette)
+  geom_tile(data = filter(data_long, dimension == "Finishing"),
+            aes(x = dimension, y = team, fill = score),
+            color = NA) +
+  scale_fill_gradientn(
+    colors = c(
+      colorRampPalette(c("#8e44ad", "white"))(5),
+      colorRampPalette(c("white", "#e67e22"))(5)[-1]
+    ),
+    values = {
+      neg_br <- seq(min(data_long$score), 0, length.out = 5)
+      pos_br <- seq(0, max(data_long$score), length.out = 5)
+      breaks <- c(neg_br, pos_br[-1])
+      scales::rescale(sign(breaks) * abs(breaks)^0.75)
+    },
+    guide = "none"
+  ) +
+  # Grey separator line
+  geom_vline(xintercept = separator_pos, color = "grey40", linewidth = 1.5) +
+  geom_text(aes(x = dimension, y = team, label = sprintf("%.1f", score)),
+            size = 3, color = "black") +
   scale_x_discrete(position = "top",
                    labels = function(x) str_wrap(gsub("\\+", "+ ", x), width = 10)) +
   guides(x.sec = guide_axis()) +
@@ -81,9 +110,9 @@ p1 <- ggplot(data_long, aes(x = dimension, y = team, fill = score)) +
   theme_hockey() +
   theme(
     plot.title = element_text(size = 14),
-    axis.text.x.top = element_text(angle = 0, hjust = 0.5, vjust = 0, size = 10),
-    axis.text.x.bottom = element_text(angle = 0, hjust = 0.5, vjust = 1, size = 10),
-    axis.text.y = element_text(size = 9),
+    axis.text.x.top = element_text(color = "black", angle = 0, hjust = 0.5, vjust = 0, size = 10),
+    axis.text.x.bottom = element_text(color = "black", angle = 0, hjust = 0.5, vjust = 1, size = 10),
+    axis.text.y = element_text(color = "black", size = 9),
     panel.grid.major.y = element_blank(),
     panel.grid = element_blank(),
     panel.border = element_blank(),
@@ -94,7 +123,7 @@ p1 <- ggplot(data_long, aes(x = dimension, y = team, fill = score)) +
 ggsave("outputs/figures/figure2_dimensions_heatmap.png",
        plot = p1,
        width = 7,
-       height = 7,
+       height = 6,
        dpi = 150)
 
 cat("Saved: outputs/figures/figure2_dimensions_heatmap.png\n")

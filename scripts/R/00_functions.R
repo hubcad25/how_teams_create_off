@@ -5,30 +5,27 @@ library(ggplot2)
 # ── Cluster reference ─────────────────────────────────────────────────────────
 
 cluster_names <- c(
-  "1" = "Crash & Hope",
+  "1" = "Streaky Offense",
   "2" = "High-Octane Drive",
-  "3" = "Streaky Offense",
-  "4" = "Selective Shooting",
-  "5" = "Lane Creation",
-  "6" = "Puck Hog & Finish"
+  "3" = "Selective Shooting",
+  "4" = "Lane Creation",
+  "5" = "Puck Hogging & Recovery"
 )
 
 cluster_colors <- c(
-  "1" = "#B8544F",
-  "2" = "#1a79a5",
-  "3" = "#738d75",
-  "4" = "#6B4F82",
-  "5" = "#C4973A",
-  "6" = "#18a68c"
+  "1" = "#738d75",
+  "2" = "#1d95cd",
+  "3" = "#D4A017",
+  "4" = "#9D4EDD",
+  "5" = "#ff7048"
 )
 
 cluster_descriptions <- c(
-  "1" = "Drive the net + puck recovery, no finish",
+  "1" = "Average everywhere, finishing-dependent (volatile)",
   "2" = "Fast tempo, drive the net, lots of rebounds",
-  "3" = "Average everywhere, finishing-dependent (volatile)",
-  "4" = "Low volume but high quality, good finishing",
-  "5" = "Create shooting lanes, traffic + puck exchanges",
-  "6" = "Aggressive puck control, keep possession, good finishers"
+  "3" = "Low volume but above-average quality",
+  "4" = "Create quality shooting lanes",
+  "5" = "Aggressive puck control, keep possession"
 )
 
 # Convenience ggplot scales

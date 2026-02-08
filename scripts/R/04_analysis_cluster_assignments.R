@@ -15,7 +15,8 @@ K <- 6
 df_dim <- read_csv("data/processed/team_dimension_scores.csv", show_col_types = FALSE)
 hc <- readRDS("data/processed/hclust_ward.rds")
 
-score_cols <- setdiff(names(df_dim), c("team", "name"))
+all_dims <- setdiff(names(df_dim), c("team", "name"))
+score_cols <- setdiff(all_dims, "Finishing")  # Finishing excluded from clustering (intermediate var)
 scores <- df_dim %>% select(all_of(score_cols)) %>% as.matrix()
 rownames(scores) <- df_dim$team
 d <- dist(scores)
@@ -64,6 +65,48 @@ if (nrow(misfit) > 0) {
   print(misfit %>% mutate(silhouette = round(silhouette, 3)))
   cat("\n")
 }
+
+# 3b. REFINEMENT: reassign negative silhouettes + singletons ----
+
+# Reassign negative-silhouette teams to their neighbor cluster
+neg_idx <- which(sil[, 3] < 0)
+if (length(neg_idx) > 0) {
+  for (i in neg_idx) {
+    old_cl <- clusters[i]
+    new_cl <- sil[i, 2]  # neighbor cluster
+    cat(sprintf("Reassign %s: cluster %d -> %d (silhouette was %.3f)\n",
+                df_dim$team[i], old_cl, new_cl, sil[i, 3]))
+    clusters[i] <- new_cl
+  }
+}
+
+# Reassign singletons to their neighbor cluster
+singleton_cls <- as.integer(names(which(table(clusters) == 1)))
+if (length(singleton_cls) > 0) {
+  for (cl in singleton_cls) {
+    i <- which(clusters == cl)
+    new_cl <- sil[i, 2]  # neighbor cluster
+    cat(sprintf("Reassign singleton %s: cluster %d -> %d\n",
+                df_dim$team[i], cl, new_cl))
+    clusters[i] <- new_cl
+  }
+}
+
+# Renumber clusters sequentially
+clusters <- as.integer(factor(clusters, levels = sort(unique(clusters))))
+
+df_clustered <- df_dim %>%
+  mutate(cluster = factor(clusters))
+
+cat(sprintf("\nAfter refinement: %d clusters\n", length(unique(clusters))))
+cat("Cluster sizes:", paste(table(clusters), collapse = "-"), "\n\n")
+
+cat("Teams per cluster (refined):\n")
+for (cl in sort(unique(df_clustered$cluster))) {
+  teams <- df_clustered %>% filter(cluster == cl) %>% pull(team)
+  cat(sprintf("  Cluster %s (%d): %s\n", cl, length(teams), paste(teams, collapse = ", ")))
+}
+cat("\n")
 
 # 4. CLUSTER PROFILES ----
 

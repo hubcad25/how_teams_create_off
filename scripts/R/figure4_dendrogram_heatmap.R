@@ -4,6 +4,7 @@
 library(tidyverse)
 library(dendextend)
 library(patchwork)
+library(ggnewscale)
 source("scripts/R/00_functions.R")
 
 cat("Creating dendrogram + heatmap k=6...\n")
@@ -19,9 +20,9 @@ dim_english <- c(
   "Qualite" = "Quality",
   "Penetration" = "Penetration",
   "Rebonds" = "Rebounds",
-  "Finishing" = "Finishing",
   "RecoveryPossession" = "Recovery+\nPossession",
-  "PuckExchanges" = "Puck\nexchanges"
+  "PuckExchanges" = "Puck\nexchanges",
+  "Finishing" = "Finishing"
 )
 
 # Team order from dendrogram
@@ -78,13 +79,14 @@ dim_long <- df_dim %>%
     team = factor(team, levels = team_order),
     x_pos = as.numeric(team),
     dimension = dplyr::recode(dimension, !!!dim_english),
-    dimension = factor(dimension, levels = dim_english)
+    dimension = factor(dimension, levels = c("Volume", "Quality", "Penetration", "Rebounds", "Recovery+\nPossession", "Puck\nexchanges", "Finishing"))
   )
 
-p_heat <- ggplot(dim_long, aes(x = x_pos, y = dimension, fill = score)) +
-  geom_tile(color = NA, linewidth = 0.4) +
-  geom_vline(xintercept = cluster_breaks, color = "grey30", linewidth = 0.6) +
-  geom_text(aes(label = sprintf("%.1f", score)), size = 2.3) +
+p_heat <- ggplot(dim_long) +
+  # First layer: 6 clustering dimensions (red-blue palette)
+  geom_tile(data = filter(dim_long, dimension != "Finishing"),
+            aes(x = x_pos, y = dimension, fill = score),
+            color = NA, linewidth = 0.4) +
   scale_fill_gradientn(
     colors = c(
       colorRampPalette(c("#2980b9", "white"))(5),
@@ -98,6 +100,28 @@ p_heat <- ggplot(dim_long, aes(x = x_pos, y = dimension, fill = score)) +
     },
     name = "Z-score"
   ) +
+  # New fill scale for Finishing
+  new_scale_fill() +
+  # Second layer: Finishing (purple-orange palette)
+  geom_tile(data = filter(dim_long, dimension == "Finishing"),
+            aes(x = x_pos, y = dimension, fill = score),
+            color = NA, linewidth = 0.4) +
+  scale_fill_gradientn(
+    colors = c(
+      colorRampPalette(c("#8e44ad", "white"))(5),
+      colorRampPalette(c("white", "#e67e22"))(5)[-1]
+    ),
+    values = {
+      neg_br <- seq(min(dim_long$score), 0, length.out = 5)
+      pos_br <- seq(0, max(dim_long$score), length.out = 5)
+      breaks <- c(neg_br, pos_br[-1])
+      scales::rescale(sign(breaks) * abs(breaks)^0.75)
+    },
+    guide = "none"
+  ) +
+  geom_vline(xintercept = cluster_breaks, color = "grey30", linewidth = 0.6) +
+  geom_hline(yintercept = 1.5, color = "grey50", linewidth = 0.8) +
+  geom_text(data = dim_long, aes(x = x_pos, y = dimension, label = sprintf("%.1f", score)), size = 2.3) +
   scale_x_continuous(
     limits = x_lim, expand = c(0, 0),
     breaks = seq_len(n_teams),
@@ -105,6 +129,7 @@ p_heat <- ggplot(dim_long, aes(x = x_pos, y = dimension, fill = score)) +
     position = "top",
     sec.axis = dup_axis()
   ) +
+  scale_y_discrete(limits = rev(c("Volume", "Quality", "Penetration", "Rebounds", "Recovery+\nPossession", "Puck\nexchanges", "Finishing"))) +
   labs(x = NULL, y = NULL) +
   theme_hockey() +
   theme(
