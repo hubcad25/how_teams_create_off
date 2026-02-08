@@ -95,16 +95,13 @@ We start with k=6. Below, the dendrogram paired with a heatmap of dimension scor
 
 ![Team profiles by cluster](outputs/figures/figure5_teams_by_cluster.png)
 
-[Interprétation rapide]
-
-| Cluster | Name | Style Signature | Example Teams |
+| Cluster | Archetype Name | Style | Example Teams |
 |---------|------|-----------------|---------------|
-| **1** | Crash & Hope | High volume + rebounds, poor finishing | CBJ, CHI, MIN, NSH, UTA, VAN |
-| **2** | High-Octane Drive | Extreme volume + rebounds, tempo-driven | ANA, CAR, COL, TBL |
-| **3** | Streaky Offense | Average everywhere, performance driven by finishing | BOS, DET, NJD, PIT... (12 teams) |
-| **4** | Selective Shooting | Low volume, elite shot quality, efficient | DAL, PHI, SEA, SJS, TOR |
-| **5** | Lane Creation | Exceptional penetration, creates high-quality lanes | EDM, LAK, NYR |
-| **6** | Puck Hog & Finish | Elite recovery + above-expected finishing | MTL, OTT |
+| **1** | Streaky Offense | Average everywhere, finishing-dependent (volatile) | BOS, BUF, CGY, DET... (14 teams) |
+| **2** | High-Octane Drive | Fast tempo, drive the net, lots of rebounds | ANA, CAR, COL, NSH, TBL |
+| **3** | Selective Shooting | Low volume but above-average quality | DAL, NYR, PHI, SEA, SJS, TOR |
+| **4** | Lane Creation | Create quality shooting lanes | EDM, LAK |
+| **5** | Puck Hogging & Recovery | Aggressive puck control, keep possession | MIN, MTL, OTT, UTA |
 
 ## [What Drives Success? trouver un titre clair pour cette section]
 
