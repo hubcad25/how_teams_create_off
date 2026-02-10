@@ -119,13 +119,20 @@ The two proactive styles lead in production, but their paths differ.
 
 - *Selective Shooting* and *Lane Creation* both sit below league average, with large internal gaps. TOR leads its cluster at 2.75 while NYR sits at 2.04. *Lane Creation* (n=2) is hard to generalize, as EDM is near league average, LAK well below.
 
-### Separation Within Clusters
+> A version of this graph with xGF/60 is available in the [Appendix](#appendix).
 
-[What separates above-average from below-average teams in each cluster?]
+### Which Dimensions Drive Production Within Archetypes?
 
-**Method:** Bootstrap regression (500 obs/cluster) with cluster-specific interactions
+Within each archetype, teams share a similar style but produce very different results. Below, each dimension score is plotted against Goals/60 per cluster. The dashed line is a simple linear trend.
 
-![Regression effects by cluster](outputs/figures/figure7_regression_effects.png)
+![Dimension scores vs Goals/60](outputs/figures/figure7_scatter_dim_within_cluster.png)
+
+Finishing has a positive slope in almost every row, steepest in *Streaky Offense*.
+Rebounds tilt upward in *High-Octane Drive*, while Quality slopes *negatively*: the teams in this cluster that score most are the ones throwing pucks at the net with traffic, not the ones picking their shots.
+
+To quantify these visual trends, we run a bootstrap regression with cluster-specific interactions. With clusters of 2 to 14 teams, we can't claim causality, but the coefficients do show which dimensions correlate with production within each archetype, controlling for the others.
+
+![Regression effects by cluster](outputs/figures/figure8_regression_effects.png)
 
 [Interprétation: à travers tlm: rebounds, finishing les plus importants]
 [Puck Hog & Finish: difficile à interpréter évidemment avec 2 équipes, Penetration semble avoir un petit effet positif.]
