@@ -27,8 +27,8 @@ cluster_means <- df_output %>%
     .groups = "drop"
   ) %>%
   mutate(
-    ci_lo = mean_goals - 1.96 * sd_goals,
-    ci_hi = mean_goals + 1.96 * sd_goals,
+    ci_lo = mean_goals - sd_goals,
+    ci_hi = mean_goals + sd_goals,
     cluster_rank = rank(-mean_goals)
   ) %>%
   arrange(cluster_rank)
@@ -65,7 +65,17 @@ p_strip <- ggplot(df_strip, aes(x = output_goals_per60, y = y_dodge, color = clu
              aes(x = mean_goals, y = y_pos, color = cluster),
              size = 22, alpha = 0.12, show.legend = FALSE) +
   geom_point(size = 3, alpha = 0.85, show.legend = FALSE) +
-  geom_text(aes(label = team), size = 2.8, nudge_y = 0.2, show.legend = FALSE) +
+  geom_text_repel(aes(label = team), size = 2.8,
+                  nudge_y = 0.15,
+                  segment.size = 0.2,
+                  segment.color = "grey60",
+                  min.segment.length = 0.05,
+                  max.overlaps = Inf,
+                  box.padding = 0.25,
+                  force = 1.5,
+                  force_pull = 0.5,
+                  seed = 42,
+                  show.legend = FALSE) +
   scale_color_manual(values = cluster_colors[1:6]) +
   scale_fill_manual(values = cluster_colors[1:6]) +
   scale_y_continuous(
@@ -74,7 +84,7 @@ p_strip <- ggplot(df_strip, aes(x = output_goals_per60, y = y_dodge, color = clu
   ) +
   labs(
     title = "Goals/60 by Offensive Archetype",
-    subtitle = "Dotted line = league avg | Circle = cluster mean | Band = 95% CI",
+    subtitle = "Dotted line = league avg | Circle = cluster mean | Band = \u00b11 SD",
     x = "Goals/60 (5v5)",
     y = NULL
   ) +
@@ -82,13 +92,13 @@ p_strip <- ggplot(df_strip, aes(x = output_goals_per60, y = y_dodge, color = clu
   theme(
     plot.title = element_text(face = "bold", size = 14),
     plot.subtitle = element_text(size = 10, color = "grey40"),
-    axis.text.y = element_text(size = 11, face = "bold"),
+    axis.text.y = element_text(size = 11, face = "plain"),
     panel.grid.major.y = element_blank()
   )
 
 # Save
 ggsave("outputs/figures/figure6_goals_strip.png", p_strip,
-       width = 11, height = 7, dpi = 150)
+       width = 11, height = 8, dpi = 300)
 
 cat("Saved: outputs/figures/figure6_goals_strip.png\n")
 print(p_strip)
