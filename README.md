@@ -105,18 +105,19 @@ We start with k=6. Below, the dendrogram paired with a heatmap of dimension scor
 
 ## What Drives Production?
 
-**What actually drives offensive production?**
+Now that we have archetypes, which ones actually produce? We measure offensive output by Goals/60 at 5v5.
 
-We measure success by Goals/60, the purest output metric.
+![Goals per 60 by archetype](outputs/figures/figure6_goals_strip.png)
 
-![Goals per 60 by cluster](outputs/figures/figure6_goals_strip.png)
+The two proactive styles lead in production, but their paths differ.
 
-[Interprétation assez in depth]
-[High-Octane Drive est le meilleur en moyenne]
-[Puck Hog & FInish est le 2e en moyenne]
-[Ce sont les 2 seuls clusters qui ont seulement des équipes au-dessus de la moyenne de la ligue]
-[Grosse séparations pour Selective Shooting, Streaky Offense et Crash & Hope]
-[Lane Creation est difficile à interpréter]
+- *High-Octane Drive* and *Puck Hogging & Recovery* are the only clusters above league average (2.71 and 2.66 GF/60). The means are close, but the variance is not. *High-Octane Drive* has the highest ceiling (COL at 3.53) and the largest spread (SD 0.463) as NSH scores just 2.14 despite playing the same style.
+
+- *Puck Hogging & Recovery* is the most consistent cluster (SD 0.256), with three of four teams between 2.72 and 2.84 GF/60. Only MIN (2.29) trails.
+
+- *Streaky Offense* (n=14) has the widest internal spread: BUF scores 2.81 GF/60, NJD just 1.91. These teams are average on every style dimension: what separates them is finishing, which is volatile.
+
+- *Selective Shooting* and *Lane Creation* both sit below league average, with large internal gaps. TOR leads its cluster at 2.75 while NYR sits at 2.04. *Lane Creation* (n=2) is hard to generalize, as EDM is near league average, LAK well below.
 
 ### Separation Within Clusters
 
@@ -175,6 +176,8 @@ Questions to explore:
 ## Appendix
 
 ![Dendrogram k-selection](outputs/figures/appendix_dendrograms_by_k.png)
+
+![xGF/60 by cluster](outputs/figures/appendix_figure6_xGF.png)
 
 - [Full code in `scripts/`](scripts/)
 - [Cluster assignments: `teams_with_scores.csv`](outputs/tables/teams_with_scores.csv)
