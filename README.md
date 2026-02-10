@@ -107,7 +107,7 @@ We start with k=6. Below, the dendrogram paired with a heatmap of dimension scor
 
 **What actually drives offensive production?**
 
-We measure success by Goals/60—the purest output metric.
+We measure success by Goals/60, the purest output metric.
 
 ![Goals per 60 by cluster](outputs/figures/figure6_goals_strip.png)
 

@@ -123,7 +123,7 @@ p1 <- ggplot(data_long) +
 ggsave("outputs/figures/figure2_dimensions_heatmap.png",
        plot = p1,
        width = 7,
-       height = 6,
+       height = 7,
        dpi = 150)
 
 cat("Saved: outputs/figures/figure2_dimensions_heatmap.png\n")
