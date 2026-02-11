@@ -95,13 +95,13 @@ We start with k=6. Below, the dendrogram paired with a heatmap of dimension scor
 
 ![Team profiles by cluster](outputs/figures/figure5_teams_by_cluster.png)
 
-| Cluster | Archetype Name | Style | Example Teams |
-|---------|------|-----------------|---------------|
-| **1** | Streaky Offense | Average everywhere, finishing-dependent (volatile) | BOS, BUF, CGY, DET... (14 teams) |
-| **2** | High-Octane Drive | Fast tempo, drive the net, lots of rebounds | ANA, CAR, COL, NSH, TBL |
-| **3** | Selective Shooting | Low volume but above-average quality | DAL, NYR, PHI, SEA, SJS, TOR |
-| **4** | Lane Creation | Create quality shooting lanes | EDM, LAK |
-| **5** | Puck Hogging & Recovery | Aggressive puck control, keep possession | MIN, MTL, OTT, UTA |
+| Archetype Name | Style | Example Teams |
+|------|-----------------|---------------|
+| High-Octane Drive | Fast tempo, drive the net, lots of rebounds | ANA, CAR, COL, NSH, TBL |
+| Puck Hogging & Recovery | Aggressive puck control, keep possession | MIN, MTL, OTT, UTA |
+| Selective Shooting | Low volume but above-average quality, selects their shooting opportunities | DAL, NYR, PHI, SEA, SJS, TOR |
+| Streaky Offense | Average everywhere, finishing-dependent (volatile) | BOS, BUF, CGY, DET... (14 teams) |
+| Lane Creation | Create quality shooting lanes | EDM, LAK |
 
 ## What Drives Production?
 
@@ -134,14 +134,10 @@ To quantify these visual trends, we run a bootstrap regression with cluster-spec
 
 ![Regression effects by cluster](outputs/figures/figure8_regression_effects.png)
 
-[Interprétation: à travers tlm: rebounds, finishing les plus importants]
-[Puck Hog & Finish: difficile à interpréter évidemment avec 2 équipes, Penetration semble avoir un petit effet positif.]
-[Streaky Offense: on voit à quel point le succès est volatile, dépend du finishing]
-[Crash & Hope: même chose, dépend bcp du finishing mais aussi du volume]
-[High-Octane Drive: dépend beaucoup des rebounds]
-[Selective Shooting et Lane Creation: rebounds]
-
-[Est-ce qu'on devrait ensuite montrer descriptivement la relation succès-dimension pour chaque cluster? Avant le test? en Annexe?]
+Across all archetypes (top row), Volume, Quality, Rebounds and Finishing have the strongest positive effects on Goals/60. Within clusters, some interesting trends emerge.
+- *High-Octane Drive*'s biggest lever is Rebounds (+0.29), while Quality is negative (-0.13): shoot more, shoot through traffic.
+- *Puck Hogging & Recovery* is driven by Quality (+0.21), suggesting this archetype benefits from being patient and waiting for good opportunities.
+- *Streaky Offense* has the largest Finishing effect of any cluster (+0.12). With no style dimension standing out, production is mostly driven by being able to convert.
 
 ## Do These Styles Exist in Past Seasons?
 
