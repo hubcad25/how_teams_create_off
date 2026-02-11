@@ -131,7 +131,8 @@ create_profile_facet <- function(focal_cl) {
 
     theme_hockey() +
     theme(
-      axis.title = element_blank(),
+      axis.title.x = element_blank(),
+      axis.title.y = element_text(size = 9, face = "plain", color = "grey30"),
       axis.text.x = element_text(size = 8.5, face = "plain", color = "grey20", angle = 0),
       axis.text.y = element_text(size = 7, color = "grey50"),
       panel.grid.major.x = element_blank(),
@@ -140,7 +141,10 @@ create_profile_facet <- function(focal_cl) {
       plot.title = element_text(size = 11, face = "plain", colour = "black", hjust = 0.5),
       plot.margin = margin(5, 5, 5, 5)
     ) +
-    labs(title = paste0("\n", focal_cl))
+    labs(
+      title = paste0("\n", focal_cl),
+      y = "Mean Z-Score\non Dimension"
+    )
 
   return(p)
 }
