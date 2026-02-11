@@ -139,14 +139,15 @@ Across all archetypes (top row), Volume, Quality, Rebounds and Finishing have th
 - *Puck Hogging & Recovery* is driven by Quality (+0.21), suggesting this archetype benefits from being patient and waiting for good opportunities.
 - *Streaky Offense* has the largest Finishing effect of any cluster (+0.12). With no style dimension standing out, production is mostly driven by being able to convert.
 
-## Do These Styles Exist in Past Seasons?
+## Do These Archetypes Exist in Past Seasons?
 
-> Method: Apply the 2025-26 clustering model to historical seasons (assuming the 6 archetypes are stable over time)
+> Method: Apply the 2025-26 clustering model to historical seasons (assuming the 5 archetypes are stable over time)
 
-![Cluster evolution 2020-2026](outputs/figures/figure8_cluster_evolution.png)
+![Cluster size evolution 2020-2026](outputs/figures/figure9a_cluster_proportions.png)
 
-![Team trajectories heatmap](outputs/figures/figure9_team_trajectories.png)
+![Cluster performance evolution](outputs/figures/figure9b_cluster_goals_over_time.png)
 
+![Team trajectories heatmap](outputs/figures/figure9b_cluster_goals_over_time.png)
 
 ## Next Steps
 
