@@ -139,11 +139,17 @@ cat("TOTAL:", nrow(df_all_seasons), "team-seasons\n\n")
 
 # 6. ADD 2025-26 FOR COMPARISON ----
 
+# Compute actual distance to centroid for 2025-26 teams
+dist_2025 <- assign_to_clusters(
+  df_2025 %>% select(all_of(score_cols)),
+  centroids_2025
+)
+
 df_2025_renamed <- df_2025 %>%
   select(team, name, all_of(score_cols), cluster) %>%
   mutate(season_year = "2025-2026") %>%
   mutate(cluster = as.factor(cluster)) %>%
-  mutate(distance_to_centroid = 0)  # 2025 teams are centroids
+  mutate(distance_to_centroid = dist_2025$distance_to_centroid)
 
 df_complete <- bind_rows(df_all_seasons, df_2025_renamed) %>%
   mutate(season_year = factor(season_year))

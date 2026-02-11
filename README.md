@@ -147,7 +147,7 @@ Across all archetypes (top row), Volume, Quality, Rebounds and Finishing have th
 
 ![Cluster performance evolution](outputs/figures/figure9b_cluster_goals_over_time.png)
 
-![Team trajectories heatmap](outputs/figures/figure9b_cluster_goals_over_time.png)
+![Team trajectories heatmap](outputs/figures/figure10_team_trajectories.png)
 
 ## Next Steps
 
