@@ -1,5 +1,6 @@
 # Factor Analysis: Create 7 orthogonal dimensions
 # One factor per dimension (confirmatory FA)
+# Pool: 159 historical team-seasons + 2025-26 (~191 total)
 
 library(tidyverse)
 library(psych)
@@ -8,10 +9,23 @@ cat("FACTOR ANALYSIS: DIMENSION CREATION\n\n")
 
 # 1. LOAD DATA ----
 
-df <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE)
+# Historical team-seasons (2020-21 to 2024-25)
+df_hist <- read_csv("data/cleaned/all_seasons_clean.csv", show_col_types = FALSE) %>%
+  rename(season = season_year) %>%
+  mutate(season = as.character(season))
+
+# Current season (2025-26)
+df_latest <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE) %>%
+  mutate(season = as.character(season))
+
+# Combine into full pool
+df <- bind_rows(df_hist, df_latest)
+
 metric_labels <- readRDS("data/processed/metric_labels.rds")
 
-cat("Data:", nrow(df), "teams\n\n")
+cat("Historical team-seasons:", nrow(df_hist), "\n")
+cat("Current season (2025-26):", nrow(df_latest), "\n")
+cat("Total pool:", nrow(df), "team-seasons\n\n")
 
 # 2. DEFINE DIMENSIONS ----
 
@@ -190,7 +204,7 @@ score_df <- as_tibble(score_list) %>%
   mutate(across(everything(), ~accentuate(as.numeric(scale(.)))))
 
 df_dimensions <- df %>%
-  select(team, name) %>%
+  select(team, name, season) %>%
   bind_cols(score_df)
 
 cat("TEAM SCORES (preview)\n\n")
@@ -220,11 +234,14 @@ cat("\n")
 # 7. SAVE DATA ----
 
 dir.create("data/processed", showWarnings = FALSE, recursive = TRUE)
+dir.create("data/processed/historical_model", showWarnings = FALSE, recursive = TRUE)
 dir.create("outputs/tables", showWarnings = FALSE, recursive = TRUE)
 
 write_csv(df_dimensions, "data/processed/team_dimension_scores.csv")
-saveRDS(results, "data/processed/dimension_fa_results.rds")
-saveRDS(dimensions, "data/processed/dimension_definitions.rds")
+
+# FA models saved to historical_model/ (trained on full 191-team-season pool)
+saveRDS(results, "data/processed/historical_model/dimension_fa_results.rds")
+saveRDS(dimensions, "data/processed/historical_model/dimension_definitions.rds")
 
 # Loadings table
 loadings_all <- map_dfr(names(results), function(dim_name) {
@@ -319,6 +336,6 @@ write_csv(dimension_summary, "outputs/tables/dimension_summary.csv")
 
 cat("Files saved:\n")
 cat("  data/processed/team_dimension_scores.csv\n")
-cat("  data/processed/dimension_fa_results.rds\n")
-cat("  data/processed/dimension_definitions.rds\n")
+cat("  data/processed/historical_model/dimension_fa_results.rds\n")
+cat("  data/processed/historical_model/dimension_definitions.rds\n")
 cat("  outputs/tables/dimension_loadings.csv\n")
