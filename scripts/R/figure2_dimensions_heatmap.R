@@ -5,15 +5,17 @@ library(tidyverse)
 library(ggnewscale)
 source("scripts/R/00_functions.R")
 
-# Read data
+# Read data — filter 2025-26 only for display
+# (FA model trained on full 191-team-season pool)
 data <- read_csv("data/processed/team_dimension_scores.csv",
-                 show_col_types = FALSE)
+                 show_col_types = FALSE) %>%
+  filter(season == "2025")
 
 # Create output directory
 dir.create("outputs/figures", recursive = TRUE, showWarnings = FALSE)
 
 # Prepare data for plotting
-dim_cols <- setdiff(names(data), c("team", "name"))
+dim_cols <- setdiff(names(data), c("team", "name", "season"))
 
 # Pivot longer and order teams by Volume
 data_long <- data %>%
