@@ -1,8 +1,8 @@
 dimension,dimension_label,n_vars,n_factors,variance_pct,eigenvalue,cronbach_alpha
-Volume,Volume,6,1,80.6,4.84,0.96
-Qualite,Quality,8,1,54.2,4.34,0.883
-Penetration,Penetration,3,1,83.2,2.5,0.937
-Rebonds,Rebounds,3,1,57.1,1.71,0.687
-Finishing,Finishing,5,1,54.6,2.73,0.778
-RecoveryPossession,Recovery+Possession,8,2,19.3,1.54,0.538
-PuckExchanges,Puck Exchanges,8,2,17.8,1.42,0.538
+Volume,Volume,6,1,87.6,5.26,0.977
+Qualite,Quality,8,1,55.1,4.4,0.877
+Penetration,Penetration,3,1,56.7,1.7,0.688
+Rebonds,Rebounds,3,1,46.3,1.39,0.508
+Finishing,Finishing,5,1,60,3,0.839
+RecoveryPossession,Recovery+Possession,8,2,24.2,1.94,0.488
+PuckExchanges,Puck Exchanges,8,2,18.6,1.49,0.488

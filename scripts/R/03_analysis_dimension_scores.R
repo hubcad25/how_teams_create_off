@@ -1,6 +1,6 @@
 # Factor Analysis: Create 7 orthogonal dimensions
 # One factor per dimension (confirmatory FA)
-# Pool: 159 historical team-seasons + 2025-26 (~191 total)
+# Pool: 2024-25 + 2025-26 (n=64 team-seasons, ère B only)
 
 library(tidyverse)
 library(psych)
@@ -12,49 +12,21 @@ cat("FACTOR ANALYSIS: DIMENSION CREATION\n\n")
 # Historical team-seasons (2020-21 to 2024-25)
 df_hist <- read_csv("data/cleaned/all_seasons_clean.csv", show_col_types = FALSE) %>%
   rename(season = season_year) %>%
-  mutate(season = as.character(season))
+  mutate(season = as.character(season)) %>%
+  filter(season == "2024-2025")
 
 # Current season (2025-26)
 df_latest <- read_csv("data/processed/team_metrics_latest.csv", show_col_types = FALSE) %>%
   mutate(season = as.character(season))
 
-# Combine into full pool
+# Pool: ère B only (2024-25 + 2025-26)
 df <- bind_rows(df_hist, df_latest)
 
 metric_labels <- readRDS("data/processed/metric_labels.rds")
 
-cat("Historical team-seasons:", nrow(df_hist), "\n")
-cat("Current season (2025-26):", nrow(df_latest), "\n")
+cat("2024-25 team-seasons:", nrow(df_hist), "\n")
+cat("2025-26 team-seasons:", nrow(df_latest), "\n")
 cat("Total pool:", nrow(df), "team-seasons\n\n")
-
-# 1b. NORMALIZE TK/GV BY ERA (rupture de comptage 2024-25) ----
-
-era_a_seasons <- c("2020-2021", "2021-2022", "2022-2023", "2023-2024")
-era_b_seasons <- c("2024-2025", "2025")
-
-tk_gv_vars <- c("input_takeaways_per60", "input_giveaways_per60", "input_takeaway_giveaway_ratio")
-
-normalize_era <- function(df, vars, era_a, era_b) {
-  df_out <- df
-  for (v in vars) {
-    idx_a <- df$season %in% era_a
-    idx_b <- df$season %in% era_b
-
-    mean_a <- mean(df[[v]][idx_a], na.rm = TRUE)
-    sd_a   <- sd(df[[v]][idx_a],   na.rm = TRUE)
-    mean_b <- mean(df[[v]][idx_b], na.rm = TRUE)
-    sd_b   <- sd(df[[v]][idx_b],   na.rm = TRUE)
-
-    df_out[[v]][idx_a] <- (df[[v]][idx_a] - mean_a) / sd_a
-    df_out[[v]][idx_b] <- (df[[v]][idx_b] - mean_b) / sd_b
-  }
-  df_out
-}
-
-df <- normalize_era(df, tk_gv_vars, era_a_seasons, era_b_seasons)
-
-cat("TK/GV normalized by era (era A:", sum(df$season %in% era_a_seasons),
-    "team-seasons; era B:", sum(df$season %in% era_b_seasons), "team-seasons)\n\n")
 
 # 2. DEFINE DIMENSIONS ----
 
@@ -219,51 +191,6 @@ for (dim_name in names(dimensions)) {
     print_loadings(result$loadings, metric_labels, dim_name, result$var_explained)
     score_list[[dim_name]] <- result$scores
   }
-}
-
-# 4b. DIAGNOSTICS TK/GV NORMALISATION (console only) ----
-
-cat("DIAGNOSTICS: TK/GV NORMALISATION\n\n")
-
-# 1. Corrélations inter-items TK/GV intra-ère après normalisation
-for (era_label in c("A", "B")) {
-  era_seasons <- if (era_label == "A") era_a_seasons else era_b_seasons
-  df_era <- df %>% filter(season %in% era_seasons) %>% select(all_of(tk_gv_vars))
-  cat(sprintf("Correlations TK/GV (era %s, n=%d):\n", era_label, nrow(df_era)))
-  print(round(cor(df_era, use = "complete.obs"), 3))
-  cat("\n")
-}
-
-# 2. Variance expliquée par Misc_1 (RecoveryPossession) après normalisation
-#    (déjà capturé dans results ci-dessus — on l'affiche ici explicitement)
-if (!is.null(results[["Misc"]])) {
-  misc_result <- results[["Misc"]]
-  if (misc_result$n_factors == 2) {
-    ss <- colSums(misc_result$loadings^2)
-    n_misc_vars <- length(dimensions[["Misc"]])
-    cat(sprintf("Misc_1 (RecoveryPossession) variance: %.1f%%\n", ss[1] / n_misc_vars * 100))
-    cat(sprintf("Misc_2 (PuckExchanges)      variance: %.1f%%\n\n", ss[2] / n_misc_vars * 100))
-  } else {
-    cat(sprintf("Misc (1 factor) variance: %.1f%%\n\n",
-                misc_result$var_explained * 100))
-  }
-}
-
-# 3. Distribution des scores RecoveryPossession par ère (pré-accentuation)
-#    On reconstruire les scores bruts depuis score_list avant accentuation
-if ("RecoveryPossession" %in% names(score_list)) {
-  rp_raw <- scale(as.numeric(score_list[["RecoveryPossession"]]))
-  for (era_label in c("A", "B")) {
-    era_seasons <- if (era_label == "A") era_a_seasons else era_b_seasons
-    idx <- df$season %in% era_seasons
-    rp_era <- rp_raw[idx]
-    cat(sprintf("RecoveryPossession scores era %s (n=%d): mean=%.3f  SD=%.3f\n",
-                era_label, sum(idx), mean(rp_era), sd(rp_era)))
-    if (era_label == "B" && sd(rp_era) < 0.3) {
-      cat("  NOTE: SD era B < 0.3 — dimension discrimine peu les equipes ere B (finding, pas un bug)\n")
-    }
-  }
-  cat("\n")
 }
 
 # 5. CREATE SCORE DATAFRAME (standardized + accentuated) ----
